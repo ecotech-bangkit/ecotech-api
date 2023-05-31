@@ -1,0 +1,25 @@
+{
+  "name": "ecotech-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecotech-bangkit/ecotech-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ecotech-bangkit/ecotech-api/issues"
+  },
+  "homepage": "https://github.com/ecotech-bangkit/ecotech-api#readme",
+  "dependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "eslint": "^8.41.0"
+  }
+}
