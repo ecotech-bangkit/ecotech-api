@@ -10,9 +10,22 @@ const PORT = process.env.PORT;
 const app = express();
 app.use(express.json());
 
+const getEmailUsers = async () => {
+  const [rows] = await connection.execute('SELECT email FROM users');
+  return rows.map((row) => row.email);
+};
+
 app.post('/v1/users/register', async (req, res) => {
   const { name, email, password, repassword } = req.body;
   try {
+    const emailUsers = await getEmailUsers();
+    if (emailUsers.includes(email)) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Email already registered',
+      });
+      return;
+    }
     if (password !== repassword) {
       res.status(400).json({
         statusCode: 400,
@@ -25,12 +38,21 @@ app.post('/v1/users/register', async (req, res) => {
     const [result] = await connection.execute('INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)', [id, name, email, hashedPassword]);
 
     res.status(201).json({
+      statusCode: 201,
       message: 'Registration successful',
-      data: req.body,
+      data: {
+        id: id,
+        name: name,
+        email: email,
+        password: hashedPassword,
+      },
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+    });
   }
 });
 
