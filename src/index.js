@@ -11,11 +11,19 @@ const app = express();
 app.use(express.json());
 
 app.post('/v1/users/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, repassword } = req.body;
   try {
+    if (password !== repassword) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Passwords do not match',
+      });
+      return;
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = uuidv4();
     const [result] = await connection.execute('INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)', [id, name, email, hashedPassword]);
+
     res.status(201).json({
       message: 'Registration successful',
       data: req.body,
