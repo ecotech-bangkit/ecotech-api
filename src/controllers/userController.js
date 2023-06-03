@@ -122,6 +122,20 @@ const createNewUser = async (req, res) => {
 const updateUserByEmail = async (req, res) => {
   const { email } = req.params;
   const { name } = req.body;
+  if (!name) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Name field is required',
+    });
+    return;
+  }
+  if (name.length < 2) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'name character minimum 2 character',
+    });
+    return;
+  }
   try {
     const [user] = await userModel.getUserByEmail(email);
     if (!user) {

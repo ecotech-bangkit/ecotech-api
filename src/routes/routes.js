@@ -5,7 +5,7 @@ const userController = require('../controllers/userController');
 crudRouter.get('/', userController.getAllUsers);
 crudRouter.get('/:email', userController.getUserByEmail);
 crudRouter.post('/register', userController.createNewUser);
-crudRouter.put('/users/:email', userController.updateUserByEmail);
-crudRouter.delete('/users/:email', userController.deleteUserByEmail);
+crudRouter.put('/:email', userController.updateUserByEmail);
+crudRouter.delete('/:email', userController.deleteUserByEmail);
 
 module.exports = crudRouter;
