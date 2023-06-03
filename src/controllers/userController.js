@@ -52,9 +52,16 @@ const getUserByEmail = async (req, res) => {
 
 const createNewUser = async (req, res) => {
   const { body } = req;
-  const { email, password, repassword } = body;
+  const { name, email, password, repassword } = body;
 
   try {
+    if (name.length < 2) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'name character minimum 2 character',
+      });
+      return;
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       res.status(400).json({
@@ -70,7 +77,7 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    if (password.length < 7 || repassword.length < 7) {
+    if (password.length < 8) {
       res.status(400).json({
         statusCode: 400,
         error: 'Password character at least 8',
