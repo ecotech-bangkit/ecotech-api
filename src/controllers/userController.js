@@ -18,6 +18,37 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
+const getUserByEmail = async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const [user] = await userModel.getUserByEmail(email);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        error: 'User not found',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'User retrieved successfully',
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error,
+    });
+  }
+};
 
 const createNewUser = async (req, res) => {
   const { body } = req;
@@ -66,7 +97,69 @@ const createNewUser = async (req, res) => {
   }
 };
 
+const updateUserByEmail = async (req, res) => {
+  const { email } = req.params;
+  const { name } = req.body;
+  try {
+    const [user] = await userModel.getUserByEmail(email);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        error: 'User not found',
+      });
+      return;
+    }
+    await userModel.updateUserByEmail(email, { name });
+    res.json({
+      statusCode: 200,
+      message: 'User updated successfully',
+      data: {
+        name,
+        email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+    });
+  }
+};
+
+const deleteUserByEmail = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const [user] = await userModel.getUserByEmail(email);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        error: 'User not found',
+      });
+      return;
+    }
+    await userModel.deleteUserByEmail(email);
+    res.json({
+      statusCode: 200,
+      message: 'User deleted successfully',
+      data: {
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
+  getUserByEmail,
   createNewUser,
+  updateUserByEmail,
+  deleteUserByEmail,
 };
