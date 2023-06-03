@@ -1,17 +1,18 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
+const connection = require('../configs/database');
 
 const getAllUsers = async (req, res) => {
   try {
-    const data = await userModel.getAllUsers();
+    const [data] = await userModel.getAllUsers();
     res.json({
       message: 'GET all user success',
       data: data,
     });
   } catch (error) {
     res.status(500).json({
-      statusCode: res.status(),
+      statusCode: 500,
       message: 'Internal server error',
       serverMessage: error,
     });
@@ -22,8 +23,9 @@ const createNewUser = async (req, res) => {
   const { body } = req;
   const { password, repassword } = body;
   try {
-    const isRegisteredEmail = await userModel.getUserByEmail(body.email);
-    if (isRegisteredEmail) {
+    const [registeredEmail] = await connection.execute('SELECT email FROM users');
+    const isEmailRegistered = registeredEmail.some((user) => user.email === body.email);
+    if (isEmailRegistered) {
       res.status(400).json({
         statusCode: 400,
         error: 'Email already registered',
@@ -42,18 +44,17 @@ const createNewUser = async (req, res) => {
     const id = uuidv4();
     await userModel.createNewUser({
       id,
-      name: body.name,
-      email: body.email,
+      ...body,
       password: hashedPassword,
     });
-    await userModel.createNewUser(body);
     res.status(201).json({
-      statusCode: res.status(),
+      statusCode: 201,
       message: 'Registration successful',
       data: {
-        id: id,
+        id,
         name: body.name,
         email: body.email,
+        password: hashedPassword,
       },
     });
   } catch (error) {

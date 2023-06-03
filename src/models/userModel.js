@@ -1,26 +1,18 @@
 const connection = require('../configs/database');
 
-const getAllUsers = async () => {
+const getAllUsers = () => {
   const query = 'SELECT * FROM users';
-  const [rows] = await connection.execute(query);
-  return rows;
+  return connection.execute(query);
 };
 
-const getUserByEmail = async (email) => {
-  const query = 'SELECT * FROM users WHERE email = ?';
-  const [rows] = await connection.execute(query, [email]);
-  return rows.length > 0;
-};
-
-const createNewUser = async (body) => {
-  const { id, name, email, password } = body;
+const createNewUser = (body) => {
   const query = 'INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)';
-  const values = [id, name, email, password];
-  await connection.execute(query, values);
+  const values = [body.id, body.name, body.email, body.password];
+
+  return connection.execute(query, values);
 };
 
 module.exports = {
   getAllUsers,
-  getUserByEmail,
   createNewUser,
 };
