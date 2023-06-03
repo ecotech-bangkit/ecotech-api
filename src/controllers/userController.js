@@ -53,21 +53,28 @@ const getUserByEmail = async (req, res) => {
 const createNewUser = async (req, res) => {
   const { body } = req;
   const { password, repassword } = body;
+
   try {
+    if (password !== repassword) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Passwords do not match',
+      });
+      return;
+    }
+    if (password.length < 7 || repassword.length < 7) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Password character at least 8',
+      });
+      return;
+    }
     const [registeredEmail] = await connection.execute('SELECT email FROM users');
     const isEmailRegistered = registeredEmail.some((user) => user.email === body.email);
     if (isEmailRegistered) {
       res.status(400).json({
         statusCode: 400,
         error: 'Email already registered',
-      });
-      return;
-    }
-
-    if (password !== repassword) {
-      res.status(400).json({
-        statusCode: 400,
-        error: 'Passwords do not match',
       });
       return;
     }
