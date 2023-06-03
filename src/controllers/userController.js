@@ -52,9 +52,17 @@ const getUserByEmail = async (req, res) => {
 
 const createNewUser = async (req, res) => {
   const { body } = req;
-  const { password, repassword } = body;
+  const { email, password, repassword } = body;
 
   try {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Invalid. Please use valid email format',
+      });
+      return;
+    }
     if (password !== repassword) {
       res.status(400).json({
         statusCode: 400,
