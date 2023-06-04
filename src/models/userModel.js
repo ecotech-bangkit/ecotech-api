@@ -9,8 +9,13 @@ const createNewUser = (body) => {
   const values = [body.id, body.name, body.email, body.password];
   return connection.execute(query, values);
 };
+const getUserByID = async (id) => {
+  const query = 'SELECT * FROM users WHERE id = ?';
+  const [user] = await connection.execute(query, [id]);
+  return user[0];
+};
 const getUserByEmail = async (email) => {
-  const query = `SELECT * FROM users WHERE email = ?`;
+  const query = 'SELECT * FROM users WHERE email = ?';
   const [user] = await connection.execute(query, [email]);
   return user;
 };
@@ -19,14 +24,15 @@ const updateUserByEmail = (email, { name }) => {
   const values = [name, email];
   return connection.execute(query, values);
 };
-const deleteUserByEmail = (email) => {
-  const query = 'DELETE FROM users WHERE email = ?';
-  return connection.execute(query, [email]);
+const deleteUserByID = (id) => {
+  const query = 'DELETE FROM users WHERE id = ?';
+  return connection.execute(query, [id]);
 };
 module.exports = {
   getAllUsers,
   createNewUser,
   getUserByEmail,
+  getUserByID,
   updateUserByEmail,
-  deleteUserByEmail,
+  deleteUserByID,
 };

@@ -18,6 +18,34 @@ const getAllUsers = async (req, res) => {
     });
   }
 };
+
+const getUserByID = async (req, res) => {
+  const { id } = req.params;
+  console.log('isi req params id = ', { id });
+  try {
+    const user = await userModel.getUserByID(id);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        error: 'User not found',
+      });
+      return;
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'User retrieved successfully',
+      data: user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error,
+    });
+  }
+};
+
 const getUserByEmail = async (req, res) => {
   const { email } = req.params;
 
@@ -30,11 +58,11 @@ const getUserByEmail = async (req, res) => {
       });
       return;
     }
-
     res.status(200).json({
       statusCode: 200,
       message: 'User retrieved successfully',
       data: {
+        id: user.id,
         name: user.name,
         email: user.email,
         password: user.password,
@@ -163,10 +191,17 @@ const updateUserByEmail = async (req, res) => {
   }
 };
 
-const deleteUserByEmail = async (req, res) => {
-  const { email } = req.params;
+const deleteUserByID = async (req, res) => {
+  const { id } = req.params;
   try {
-    const [user] = await userModel.getUserByEmail(email);
+    if (!id) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Invalid request. Please use parameter user ID.',
+      });
+      return;
+    }
+    const user = await userModel.deleteUserByID(id);
     if (!user) {
       res.status(404).json({
         statusCode: 404,
@@ -174,14 +209,10 @@ const deleteUserByEmail = async (req, res) => {
       });
       return;
     }
-    await userModel.deleteUserByEmail(email);
-    res.json({
+    await userModel.deleteUserByID(id);
+    res.status(200).json({
       statusCode: 200,
       message: 'User deleted successfully',
-      data: {
-        name: user.name,
-        email: user.email,
-      },
     });
   } catch (error) {
     console.error(error);
@@ -195,7 +226,8 @@ const deleteUserByEmail = async (req, res) => {
 module.exports = {
   getAllUsers,
   getUserByEmail,
+  getUserByID,
   createNewUser,
   updateUserByEmail,
-  deleteUserByEmail,
+  deleteUserByID,
 };
