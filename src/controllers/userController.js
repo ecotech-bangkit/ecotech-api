@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 const connection = require('../configs/database');
 
 const getAllUsers = async (req, res) => {
@@ -225,7 +226,40 @@ const deleteUserByID = async (req, res) => {
     });
   }
 };
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
+  try {
+    const [user] = await userModel.getUserByEmail(email);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        error: 'User not found',
+      });
+      return;
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({
+        statusCode: 401,
+        error: 'Invalid password',
+      });
+      return;
+    }
+    const token = jwt.sign({ id: user.id }, 'your-secret-key');
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Login successful',
+      token: token,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+    });
+  }
+};
 module.exports = {
   getAllUsers,
   getUserByEmail,
@@ -233,4 +267,5 @@ module.exports = {
   createNewUser,
   updateUserByEmail,
   deleteUserByID,
+  login,
 };

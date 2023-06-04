@@ -11,7 +11,7 @@ app.use(middlewareLog);
 app.use(express.json());
 
 app.use('/v1/users/', crudRouter);
-app.use('/v1/register/', authRouter);
+app.use('/v1/auth/', authRouter);
 
 app.listen(PORT, () => {
   console.log(`App successfully run in ${DB_HOST}:${PORT}`);
