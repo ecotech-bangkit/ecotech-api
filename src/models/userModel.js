@@ -5,8 +5,8 @@ const getAllUsers = () => {
   return connection.execute(query);
 };
 const createNewUser = (body) => {
-  const query = 'INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)';
-  const values = [body.id, body.name, body.email, body.password];
+  const query = 'INSERT INTO users (id, name, email, password, roleid) VALUES (?, ?, ?, ?, ?)';
+  const values = [body.id, body.name, body.email, body.password, body.roleid];
   return connection.execute(query, values);
 };
 const getUserByID = async (id) => {

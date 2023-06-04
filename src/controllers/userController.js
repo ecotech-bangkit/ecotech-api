@@ -21,7 +21,6 @@ const getAllUsers = async (req, res) => {
 
 const getUserByID = async (req, res) => {
   const { id } = req.params;
-  console.log('isi req params id = ', { id });
   try {
     const user = await userModel.getUserByID(id);
     if (!user) {
@@ -123,11 +122,15 @@ const createNewUser = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = uuidv4();
+    const defaultRoleUser = 3;
     await userModel.createNewUser({
       id,
       ...body,
       password: hashedPassword,
+      roleid: defaultRoleUser,
+      image: '',
     });
+
     res.status(201).json({
       statusCode: 201,
       message: 'Registration successful',
