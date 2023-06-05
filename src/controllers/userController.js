@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
-      serverMessage: error,
+      serverMessage: error.sqlMessage,
     });
   }
 };
@@ -41,7 +41,7 @@ const getUserByID = async (req, res) => {
     res.status(500).json({
       statusCode: 500,
       error: 'Internal Server Error',
-      errorMessage: error,
+      errorMessage: error.sqlMessage,
     });
   }
 };
@@ -73,7 +73,7 @@ const getUserByEmail = async (req, res) => {
     res.status(500).json({
       statusCode: 500,
       error: 'Internal Server Error',
-      errorMessage: error,
+      errorMessage: error.sqlMessage,
     });
   }
 };
@@ -147,6 +147,7 @@ const createNewUser = async (req, res) => {
     res.status(500).json({
       statusCode: 500,
       error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
     });
   }
 };
@@ -191,6 +192,7 @@ const updateUserByEmail = async (req, res) => {
     res.status(500).json({
       statusCode: 500,
       error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
     });
   }
 };
@@ -223,6 +225,7 @@ const deleteUserByID = async (req, res) => {
     res.status(500).json({
       statusCode: 500,
       error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
     });
   }
 };
@@ -260,6 +263,11 @@ const login = async (req, res) => {
     });
   }
 };
+const logout = (req, res) => {
+  res.json({
+    message: 'Logout successful',
+  });
+};
 module.exports = {
   getAllUsers,
   getUserByEmail,
@@ -268,4 +276,5 @@ module.exports = {
   updateUserByEmail,
   deleteUserByID,
   login,
+  logout,
 };
