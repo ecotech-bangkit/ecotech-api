@@ -1,11 +1,32 @@
 require('dotenv').config();
 
 const express = require('express');
-const app = express();
-
+const morgan = require('morgan');
+const helmet = require('helmet');
+const middlewareLog = require('./middlewares/logger');
+const { crudRouter, authRouter } = require('./routes/routes');
+const session = require('express-session');
 const DB_HOST = process.env.DB_HOST;
-const DB_PORT = process.env.DB_PORT;
+const PORT = process.env.PORT;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
-app.listen(DB_PORT, () => {
-  console.log(`App successfully run in ${DB_HOST}:${DB_PORT}`);
+const app = express();
+app.use(morgan('dev'));
+app.use(helmet());
+app.use(middlewareLog);
+app.use(express.json());
+app.use(
+  session({
+    secret: JWT_SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use('/v1/users/', crudRouter);
+app.use('/v1/auth/', authRouter);
+
+app.listen(PORT, () => {
+  console.log(`App successfully run in ${DB_HOST}:${PORT}`);
 });
+
+module.exports = { app };
