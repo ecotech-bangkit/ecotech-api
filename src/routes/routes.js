@@ -6,8 +6,9 @@ const needAuthorization = require('../middlewares/auth');
 
 crudRouter.get('/', needAuthorization, userController.getAllUsers);
 crudRouter.get('/:email', needAuthorization, userController.getUserByEmail);
-crudRouter.get('/id/:id', userController.getUserByID);
-crudRouter.put('/:email', userController.updateUserByEmail);
+crudRouter.get('/id/:id', needAuthorization, userController.getUserByID);
+crudRouter.put('/:email', needAuthorization, userController.updateUserByEmail);
+crudRouter.put('/changepassword/:email', needAuthorization, userController.updateUserPasswordByEmail);
 crudRouter.delete('/:id', needAuthorization, userController.deleteUserByID);
 
 authRouter.post('/register', userController.createNewUser);

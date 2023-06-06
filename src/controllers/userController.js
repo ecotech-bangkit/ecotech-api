@@ -2,7 +2,6 @@ const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
-const connection = require('../configs/database');
 require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const getAllUsers = async (req, res) => {
@@ -113,8 +112,8 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    const [registeredEmail] = await connection.execute('SELECT email FROM users');
-    const isEmailRegistered = registeredEmail.some((user) => user.email === body.email);
+    const registeredEmail = await userModel.getUserByEmail(body.email);
+    const isEmailRegistered = registeredEmail.length > 0;
     if (isEmailRegistered) {
       res.status(400).json({
         statusCode: 400,
@@ -179,7 +178,7 @@ const updateUserByEmail = async (req, res) => {
       });
       return;
     }
-    await userModel.updateUserByEmail(email, { name });
+    await userModel.updateUserByEmail(email, { name: req.body.name });
     res.json({
       statusCode: 200,
       message: 'User updated successfully',
@@ -194,6 +193,57 @@ const updateUserByEmail = async (req, res) => {
       statusCode: 500,
       error: 'Internal Server Error',
       errorMessage: error.sqlMessage,
+    });
+  }
+};
+
+const updateUserPasswordByEmail = async (req, res) => {
+  const { email } = req.params;
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
+  try {
+    const [user] = await userModel.getUserByEmail(email);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        message: 'User not found',
+      });
+      return;
+    }
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({
+        statusCode: 401,
+        message: 'Invalid old password',
+      });
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      res.status(400).json({
+        statusCode: 400,
+        message: `Password doesn't match`,
+      });
+      return;
+    }
+    if (newPassword.length && confirmNewPassword.length < 8) {
+      res.status(400).json({
+        statusCode: 400,
+        message: 'New password at least 8 character',
+      });
+    }
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+    await userModel.updateUserPasswordByEmail(email, hashNewPassword);
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error,
+      message: error.sqlMessage,
     });
   }
 };
@@ -244,8 +294,8 @@ const login = async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({
-        statusCode: 401,
+      res.status(400).json({
+        statusCode: 400,
         error: 'Invalid password',
       });
       return;
@@ -288,6 +338,7 @@ module.exports = {
   getUserByID,
   createNewUser,
   updateUserByEmail,
+  updateUserPasswordByEmail,
   deleteUserByID,
   login,
   logout,
