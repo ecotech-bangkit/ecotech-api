@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+
 const getAllUsers = async (req, res) => {
   try {
     const [data] = await userModel.getAllUsers();
@@ -229,6 +230,7 @@ const updateUserPasswordByEmail = async (req, res) => {
         statusCode: 400,
         message: 'New password at least 8 character',
       });
+      return;
     }
     const hashNewPassword = await bcrypt.hash(newPassword, 10);
     await userModel.updateUserPasswordByEmail(email, hashNewPassword);
@@ -301,7 +303,7 @@ const login = async (req, res) => {
       return;
     }
     req.session.userId = user.id;
-    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
+    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
     res.status(200).json({
       statusCode: 200,
       message: 'Login successful',
@@ -317,6 +319,7 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
+  req.headers.authorization = null;
   req.session.destroy((err) => {
     if (err) {
       console.error('Error occurred during logout:', err);
