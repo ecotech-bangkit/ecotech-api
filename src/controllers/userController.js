@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const connection = require('../configs/database');
-
+require('dotenv').config();
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const getAllUsers = async (req, res) => {
   try {
     const [data] = await userModel.getAllUsers();
@@ -207,7 +208,7 @@ const deleteUserByID = async (req, res) => {
       });
       return;
     }
-    const user = await userModel.deleteUserByID(id);
+    const user = await userModel.getUserByID(id);
     if (!user) {
       res.status(404).json({
         statusCode: 404,
@@ -249,23 +250,36 @@ const login = async (req, res) => {
       });
       return;
     }
-    const token = jwt.sign({ id: user.id }, 'your-secret-key');
+    req.session.userId = user.id;
+    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
     res.status(200).json({
       statusCode: 200,
       message: 'Login successful',
       token: token,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       statusCode: 500,
       error: 'Internal Server Error',
+      errorMessage: error,
     });
   }
 };
+
 const logout = (req, res) => {
-  res.json({
-    message: 'Logout successful',
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error occurred during logout:', err);
+      res.status(500).json({
+        statusCode: 500,
+        error: 'Internal Server Error',
+      });
+    } else {
+      res.status(200).json({
+        statusCode: 200,
+        message: 'Logout successful',
+      });
+    }
   });
 };
 module.exports = {

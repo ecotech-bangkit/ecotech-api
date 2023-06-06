@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+require('dotenv').config();
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -10,7 +12,7 @@ const authenticateToken = (req, res, next) => {
       error: 'Unauthorized',
     });
   }
-  jwt.verify(token, 'your-secret-key', (err, user) => {
+  jwt.verify(token, JWT_SECRET_KEY, (err, user) => {
     if (err) {
       return res.status(403).json({
         statusCode: 403,
