@@ -2,8 +2,8 @@ const express = require('express');
 const crudRouter = express.Router();
 const authRouter = express.Router();
 const routerML = express.Router();
-const loadModel = require('../models/mlModels');
 const userController = require('../controllers/userController');
+const mlController = require('../controllers/mlController');
 const needAuthorization = require('../middlewares/auth');
 
 crudRouter.use(needAuthorization);
@@ -18,4 +18,6 @@ authRouter.post('/register', userController.createNewUser);
 authRouter.post('/login', userController.login);
 authRouter.post('/logout', needAuthorization, userController.logout);
 
-module.exports = { crudRouter, authRouter };
+routerML.post('/predict', upload.single('image'), mlController.predict);
+
+module.exports = { crudRouter, authRouter, routerML };

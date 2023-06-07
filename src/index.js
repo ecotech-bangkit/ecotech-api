@@ -24,6 +24,9 @@ app.use(
 );
 app.use('/v1/users/', crudRouter);
 app.use('/v1/auth/', authRouter);
+app.get('/', (req, res) => {
+  res.send('Response Success!');
+});
 
 app.listen(PORT, () => {
   console.log(`App successfully run in ${DB_HOST}:${PORT}`);
