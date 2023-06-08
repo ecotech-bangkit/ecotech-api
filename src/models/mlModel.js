@@ -12,6 +12,7 @@ async function loadModel() {
 async function predict(tensor) {
   const loadedModel = await loadModel();
   const predictions = loadedModel.predict(tensor);
-  return predictions.array();
+  const probabilities = Array.from(predictions.dataSync()); // Mengubah predictions menjadi array menggunakan dataSync()
+  return probabilities;
 }
 module.exports = { loadModel, predict };
