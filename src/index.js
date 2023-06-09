@@ -3,8 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const cors = require('cors');
 const middlewareLog = require('./middlewares/logger');
-const dbPool = require('./configs/database');
 const { crudRouter, authRouter, routerML } = require('./routes/routes');
 const session = require('express-session');
 const DB_HOST = process.env.DB_HOST;
@@ -12,6 +12,7 @@ const PORT = process.env.PORT;
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const app = express();
+app.use(cors());
 app.use(morgan('dev'));
 app.use(helmet());
 app.use(middlewareLog);
