@@ -10,13 +10,14 @@ class MLController {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(image, 0, 0, 256, 256);
 
-      const tensor = tf.browser.fromPixels(canvas).toFloat().expandDims();
+      const tensor = tf.browser.fromPixels(canvas).expandDims();
       const predictions = await predict(tensor);
       const probability = predictions[0];
 
       const result = {
-        probability: probability,
-        prediction: probability >= 0.5 ? 'Positive' : 'Negative',
+        statusCode: 200,
+        probability: probability.toFixed(2),
+        prediction: probability >= 0.5 ? "This is not categorized as e-waste, you can't send to collector." : 'This is an e-waste, you can send to collector!',
       };
 
       res.json(result);
