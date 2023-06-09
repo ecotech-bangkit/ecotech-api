@@ -33,6 +33,15 @@ const deleteUserByID = (id) => {
   const query = 'DELETE FROM users WHERE id = ?';
   return connection.execute(query, [id]);
 };
+const logout = async (userId) => {
+  const query = 'UPDATE users SET token = NULL WHERE id = ?';
+  await connection.execute(query, [userId]);
+};
+const updateUserTokenByEmail = (email, token) => {
+  const query = 'UPDATE users SET token = ? WHERE email = ?';
+  const values = [token, email];
+  return connection.execute(query, values);
+};
 module.exports = {
   getAllUsers,
   createNewUser,
@@ -41,4 +50,6 @@ module.exports = {
   updateUserByEmail,
   updateUserPasswordByEmail,
   deleteUserByID,
+  logout,
+  updateUserTokenByEmail,
 };

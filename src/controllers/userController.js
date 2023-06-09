@@ -304,6 +304,7 @@ const login = async (req, res) => {
     }
     req.session.userId = user.id;
     const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
+    await userModel.updateUserTokenByEmail(user.email, token);
     res.status(200).json({
       statusCode: 200,
       message: 'Login successful',
@@ -318,23 +319,88 @@ const login = async (req, res) => {
   }
 };
 
-const logout = (req, res) => {
-  req.headers.authorization = null;
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Error occurred during logout:', err);
+const logout = async (req, res) => {
+  const userId = req.session.userId;
+
+  try {
+    if (!userId) {
+      res.status(401).json({
+        statusCode: 401,
+        error: 'Unauthorized',
+      });
+      return;
+    }
+    await userModel.logout(userId);
+    req.session.userId = null; // Hapus nilai userId dari session
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Logout successful',
+    });
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error,
+    });
+  }
+};
+
+const uploadProfilePhoto = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const { file } = req;
+
+    const [user] = await userModel.getUserByEmail(email);
+    if (!user) {
+      res.status(404).json({
+        statusCode: 404,
+        error: 'User not found',
+      });
+      return;
+    }
+    const storage = new Storage();
+    const bucketName = process.env.GCS_BUCKET_NAME;
+    const fileName = `${uuidv4()}-${file.originalname}`;
+    const bucket = storage.bucket(bucketName);
+    const gcsFile = bucket.file(fileName);
+    const stream = gcsFile.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+      resumable: false,
+    });
+
+    stream.on('error', (error) => {
+      console.error('Error occurred during file upload:', error);
       res.status(500).json({
         statusCode: 500,
         error: 'Internal Server Error',
       });
-    } else {
+    });
+
+    stream.on('finish', async () => {
+      const imageUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+      await userModel.updateUserByEmail(email, { image: imageUrl });
+
       res.status(200).json({
         statusCode: 200,
-        message: 'Logout successful',
+        message: 'Profile photo uploaded successfully',
+        imageUrl: imageUrl,
       });
-    }
-  });
+    });
+
+    stream.end(file.buffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error,
+    });
+  }
 };
+
 module.exports = {
   getAllUsers,
   getUserByEmail,
@@ -342,6 +408,7 @@ module.exports = {
   createNewUser,
   updateUserByEmail,
   updateUserPasswordByEmail,
+  uploadProfilePhoto,
   deleteUserByID,
   login,
   logout,
