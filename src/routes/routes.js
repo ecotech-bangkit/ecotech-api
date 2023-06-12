@@ -29,6 +29,6 @@ crudRouter.put('/changepassword/:email', userController.updateUserPasswordByEmai
 crudRouter.delete('/:id', userController.deleteUserByID);
 crudRouter.post('/uploadphoto/:email', upload.single('file'), userController.uploadProfilePhoto);
 
-routerML.post('/', upload.single('image'), ImgUpload.uploadToGcs, mlController.predict);
+routerML.post('/', upload.single('image'), mlController.predict, ImgUpload.uploadToGcs);
 
 module.exports = { crudRouter, authRouter, routerML };
