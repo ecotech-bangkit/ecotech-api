@@ -6,7 +6,6 @@ const routerML = express.Router();
 const userController = require('../controllers/userController');
 const mlController = require('../controllers/mlController');
 const needAuthorization = require('../middlewares/auth');
-const ImgUpload = require('../modules/imgUpload');
 
 // Konfigurasi Multer
 const upload = multer({
@@ -29,6 +28,6 @@ crudRouter.put('/changepassword/:email', userController.updateUserPasswordByEmai
 crudRouter.delete('/:id', userController.deleteUserByID);
 crudRouter.post('/uploadphoto/:email', upload.single('file'), userController.uploadProfilePhoto);
 
-routerML.post('/', upload.single('image'), mlController.predict, ImgUpload.uploadToGcs);
+routerML.post('/', upload.single('image'), mlController.predict);
 
 module.exports = { crudRouter, authRouter, routerML };

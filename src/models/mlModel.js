@@ -1,14 +1,18 @@
 const tf = require('@tensorflow/tfjs-node');
+require('dotenv').config();
 
 let model;
 
 async function loadModel() {
   if (!model) {
-    model = await tf.loadLayersModel('file://./src/models/model.json');
+    const modelPath = './src/models/model.json'; // Ubah path model.json sesuai dengan lokasi file di proyek
+
+    model = await tf.loadLayersModel(`file://${modelPath}`);
     console.log('Model has been loaded');
   }
   return model;
 }
+
 async function predict(tensor) {
   const loadedModel = await loadModel();
   const predictions = loadedModel.predict(tensor);

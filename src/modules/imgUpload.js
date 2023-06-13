@@ -19,6 +19,7 @@ let ImgUpload = {};
 
 ImgUpload.uploadToGcs = (req, res, next) => {
   if (!req.file) return next();
+
   const gcsname = `${Date.now()}-${req.file.originalname}`;
   const file = bucket.file(gcsname);
   const stream = file.createWriteStream({
