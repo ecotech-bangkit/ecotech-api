@@ -24,6 +24,11 @@ const updateUserByEmail = (email, { name }) => {
   const values = [name, email];
   return connection.execute(query, values);
 };
+const updatePhotoProfileByEmail = (email, { image }) => {
+  const query = 'UPDATE users SET image = ? WHERE email = ?';
+  const values = [image || null, email];
+  return connection.execute(query, values);
+};
 const updateUserPasswordByEmail = (email, password) => {
   const query = 'UPDATE users SET password = ? WHERE email = ?';
   const values = [password, email];
@@ -48,6 +53,7 @@ module.exports = {
   getUserByEmail,
   getUserByID,
   updateUserByEmail,
+  updatePhotoProfileByEmail,
   updateUserPasswordByEmail,
   deleteUserByID,
   logout,

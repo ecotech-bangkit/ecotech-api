@@ -4,6 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME;
+const { Storage } = require('@google-cloud/storage');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -302,8 +304,7 @@ const login = async (req, res) => {
       });
       return;
     }
-    req.session.userId = user.id;
-    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
     await userModel.updateUserTokenByEmail(user.email, token);
     res.status(200).json({
       statusCode: 200,
@@ -320,7 +321,7 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  const userId = req.session.userId;
+  const userId = req.user.id;
 
   try {
     if (!userId) {
@@ -331,7 +332,6 @@ const logout = async (req, res) => {
       return;
     }
     await userModel.logout(userId);
-    req.session.userId = null; // Hapus nilai userId dari session
 
     res.status(200).json({
       statusCode: 200,
@@ -350,7 +350,6 @@ const uploadProfilePhoto = async (req, res) => {
   try {
     const { email } = req.params;
     const { file } = req;
-
     const [user] = await userModel.getUserByEmail(email);
     if (!user) {
       res.status(404).json({
@@ -359,9 +358,21 @@ const uploadProfilePhoto = async (req, res) => {
       });
       return;
     }
+    // Mendapatkan token JWT dari header Authorization
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
+    const userId = decodedToken.id;
+    if (user.id !== userId) {
+      res.status(401).json({
+        statusCode: 401,
+        error: 'Unauthorized',
+      });
+      return;
+    }
     const storage = new Storage();
-    const bucketName = process.env.GCS_BUCKET_NAME;
-    const fileName = `${uuidv4()}-${file.originalname}`;
+    const bucketName = GCS_BUCKET_NAME;
+    const timestamp = Date.now();
+    const fileName = `${file.originalname}-${timestamp}`;
     const bucket = storage.bucket(bucketName);
     const gcsFile = bucket.file(fileName);
     const stream = gcsFile.createWriteStream({
@@ -376,12 +387,13 @@ const uploadProfilePhoto = async (req, res) => {
       res.status(500).json({
         statusCode: 500,
         error: 'Internal Server Error',
+        errorMessage: error.message,
       });
     });
 
     stream.on('finish', async () => {
       const imageUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
-      await userModel.updateUserByEmail(email, { image: imageUrl });
+      await userModel.updatePhotoProfileByEmail(email, { image: imageUrl });
 
       res.status(200).json({
         statusCode: 200,

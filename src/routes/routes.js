@@ -7,11 +7,10 @@ const userController = require('../controllers/userController');
 const mlController = require('../controllers/mlController');
 const needAuthorization = require('../middlewares/auth');
 
-// Konfigurasi Multer
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // Batasan ukuran file 5MB
+    fileSize: 5 * 1024 * 1024,
   },
 });
 
@@ -26,7 +25,7 @@ crudRouter.get('/id/:id', userController.getUserByID);
 crudRouter.put('/:email', userController.updateUserByEmail);
 crudRouter.put('/changepassword/:email', userController.updateUserPasswordByEmail);
 crudRouter.delete('/:id', userController.deleteUserByID);
-crudRouter.post('/uploadphoto/:email', upload.single('file'), userController.uploadProfilePhoto);
+crudRouter.post('/uploadphoto/:email', upload.single('image'), userController.uploadProfilePhoto);
 
 routerML.post('/', upload.single('image'), mlController.predict);
 
