@@ -321,7 +321,7 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.id ? req.user.id : null;
 
   try {
     if (!userId) {
