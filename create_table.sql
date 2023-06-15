@@ -10,6 +10,7 @@
   `password` varchar(100) DEFAULT NULL,
   `roleid` int(11) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
+  `token` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_role` (`roleid`),
   CONSTRAINT `fk_role` FOREIGN KEY (`roleid`) REFERENCES `roles` (`roleid`)

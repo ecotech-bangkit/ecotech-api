@@ -24,6 +24,11 @@ const updateUserByEmail = (email, { name }) => {
   const values = [name, email];
   return connection.execute(query, values);
 };
+const updatePhotoProfileByEmail = (email, { image }) => {
+  const query = 'UPDATE users SET image = ? WHERE email = ?';
+  const values = [image || null, email];
+  return connection.execute(query, values);
+};
 const updateUserPasswordByEmail = (email, password) => {
   const query = 'UPDATE users SET password = ? WHERE email = ?';
   const values = [password, email];
@@ -33,12 +38,24 @@ const deleteUserByID = (id) => {
   const query = 'DELETE FROM users WHERE id = ?';
   return connection.execute(query, [id]);
 };
+const logout = async (userId) => {
+  const query = 'UPDATE users SET token = NULL WHERE id = ?';
+  await connection.execute(query, [userId]);
+};
+const updateUserTokenByEmail = (email, token) => {
+  const query = 'UPDATE users SET token = ? WHERE email = ?';
+  const values = [token, email];
+  return connection.execute(query, values);
+};
 module.exports = {
   getAllUsers,
   createNewUser,
   getUserByEmail,
   getUserByID,
   updateUserByEmail,
+  updatePhotoProfileByEmail,
   updateUserPasswordByEmail,
   deleteUserByID,
+  logout,
+  updateUserTokenByEmail,
 };
