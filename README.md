@@ -4,4 +4,4 @@
 
 ### API docs:
 
-### https://documenter.getpostman.com/view/22945961/2s93sZ6uBW#319eb2c6-21bd-47cc-8f0e-52388d152af2
+### https://app.swaggerhub.com/apis/INDOBANDIT07/eco-tech_api_app_engine/1.0
