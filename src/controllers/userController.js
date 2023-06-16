@@ -6,7 +6,7 @@ require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME;
 const { Storage } = require('@google-cloud/storage');
-const { generateTokenPair } = require('../middlewares/authMiddleware');
+const { generateTokenPair } = require('../middlewares/auth');
 
 const getAllUsers = async (req, res) => {
   try {
