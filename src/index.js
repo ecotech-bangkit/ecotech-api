@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   res.send('Response Success!');
 });
 
-app.listen(PORT, () => {
+app.listen(PORT || 8000, () => {
   console.log(`App successfully run in ${DB_HOST}:${PORT}`);
 });
 
