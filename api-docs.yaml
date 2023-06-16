@@ -1,0 +1,365 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: EcoTech-api App Engine
+  description: >-
+    isi dari base url =
+    [https://backend-dot-capstone-project-c23-ps236.et.r.appspot.com](https://backend-dot-capstone-project-c23-ps236.et.r.appspot.com)
+  contact: {}
+host: backend-dot-capstone-project-c23-ps236.et.r.appspot.com
+basePath: /v1
+securityDefinitions: {}
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /auth/register:
+    post:
+      summary: Register User
+      tags:
+        - Misc
+      operationId: RegisterUser
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/RegisterUserRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /predict:
+    post:
+      summary: Predict
+      tags:
+        - Misc
+      operationId: Predict
+      deprecated: false
+      produces:
+        - application/json
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: image
+          in: formData
+          required: true
+          type: file
+          format: file
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /users:
+    get:
+      summary: Get All Users
+      tags:
+        - Misc
+      operationId: GetAllUsers
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /users/{email}:
+    get:
+      summary: Get User By Email
+      tags:
+        - Misc
+      operationId: GetUserByEmail
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: email
+          in: path
+          required: true
+          type: string
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+    put:
+      summary: Update User By Email
+      tags:
+        - Misc
+      operationId: UpdateUserByEmail
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: email
+          in: path
+          required: true
+          type: string
+          description: ''
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/UpdateUserByEmailRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /users/id/{id}:
+    get:
+      summary: Get User By ID
+      tags:
+        - Misc
+      operationId: GetUserByID
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: id
+          in: path
+          required: true
+          type: string
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /users/uploadphoto/{email}:
+    post:
+      summary: uploadProfilePhotobyEmail
+      tags:
+        - Misc
+      operationId: uploadProfilePhotobyEmail
+      deprecated: false
+      produces:
+        - application/json
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: email
+          in: path
+          required: true
+          type: string
+          description: ''
+        - name: image
+          in: formData
+          required: true
+          type: file
+          format: file
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /users/changepassword/{email}:
+    put:
+      summary: Change User Password By Email
+      tags:
+        - Misc
+      operationId: ChangeUserPasswordByEmail
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: email
+          in: path
+          required: true
+          type: string
+          description: ''
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/ChangeUserPasswordByEmailRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /users/removeuser/{id}:
+    delete:
+      summary: Delete User by ID
+      tags:
+        - Misc
+      operationId: DeleteUserbyID
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: id
+          in: path
+          required: true
+          type: string
+          description: ''
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /auth/login:
+    post:
+      summary: Login
+      tags:
+        - Misc
+      operationId: Login
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+        - name: Body
+          in: body
+          required: true
+          description: ''
+          schema:
+            $ref: '#/definitions/LoginRequest'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+  /auth/logout:
+    post:
+      summary: Logout
+      tags:
+        - Misc
+      operationId: Logout
+      deprecated: false
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          default: Bearer {token}
+          type: string
+      responses:
+        '200':
+          description: ''
+          headers: {}
+definitions:
+  RegisterUserRequest:
+    title: RegisterUserRequest
+    example:
+      name: namabaru3
+      email: aldimas@stiki.ac.id
+      password: aldimasjaya
+      repassword: aldimasjaya
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      repassword:
+        type: string
+    required:
+      - name
+      - email
+      - password
+      - repassword
+  UpdateUserByEmailRequest:
+    title: UpdateUserByEmailRequest
+    example:
+      name: ini nama baru
+    type: object
+    properties:
+      name:
+        type: string
+    required:
+      - name
+  ChangeUserPasswordByEmailRequest:
+    title: ChangeUserPasswordByEmailRequest
+    example:
+      oldPassword: passbaruu
+      newPassword: inibarulagi
+      confirmNewPassword: inibarulagi
+    type: object
+    properties:
+      oldPassword:
+        type: string
+      newPassword:
+        type: string
+      confirmNewPassword:
+        type: string
+    required:
+      - oldPassword
+      - newPassword
+      - confirmNewPassword
+  LoginRequest:
+    title: LoginRequest
+    example:
+      email: aldimas@stiki.ac.id
+      password: passbaruu
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+      - email
+      - password
+security: []
+tags:
+  - name: Misc
+    description: ''
