@@ -24,7 +24,7 @@ crudRouter.get('/:email', userController.getUserByEmail);
 crudRouter.get('/id/:id', userController.getUserByID);
 crudRouter.put('/:email', userController.updateUserByEmail);
 crudRouter.put('/changepassword/:email', userController.updateUserPasswordByEmail);
-crudRouter.delete('/:id', userController.deleteUserByID);
+crudRouter.delete('/delete/:id', userController.deleteUserByID);
 crudRouter.post('/uploadphoto/:email', upload.single('image'), userController.uploadProfilePhoto);
 
 routerML.post('/', upload.single('image'), mlController.predict);
