@@ -6,6 +6,7 @@ require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME;
 const { Storage } = require('@google-cloud/storage');
+const { generateTokenPair } = require('../middlewares/authMiddleware');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -124,7 +125,8 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const id = uuidv4();
     const defaultRoleUser = 3;
     await userModel.createNewUser({
@@ -134,6 +136,7 @@ const createNewUser = async (req, res) => {
       roleid: defaultRoleUser,
       image: '',
     });
+    // const { accessToken, refreshToken } = generateTokenPair({ id });
 
     res.status(201).json({
       statusCode: 201,
@@ -143,6 +146,8 @@ const createNewUser = async (req, res) => {
         name: body.name,
         email: body.email,
         password: hashedPassword,
+        // accessToken,
+        // refreshToken,
       },
     });
   } catch (error) {
@@ -304,12 +309,15 @@ const login = async (req, res) => {
       });
       return;
     }
-    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY);
-    await userModel.updateUserTokenByEmail(user.email, token);
+    const { accessToken, refreshToken } = generateTokenPair(user);
+
+    await userModel.updateUserTokenByEmail(user.email, refreshToken);
+
     res.status(200).json({
       statusCode: 200,
       message: 'Login successful',
-      token: token,
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     res.status(500).json({
@@ -329,7 +337,6 @@ const logout = async (req, res) => {
         statusCode: 401,
         error: 'Unauthorized',
       });
-      return;
     }
     await userModel.logout(userId);
 
