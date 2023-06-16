@@ -16,15 +16,15 @@ const upload = multer({
 
 authRouter.post('/register', userController.createNewUser);
 authRouter.post('/login', userController.login);
-authRouter.post('/logout', needAuthorization, userController.logout);
+authRouter.post('/logout', needAuthorization.authenticateToken, userController.logout);
 
-crudRouter.use(needAuthorization);
+crudRouter.use(needAuthorization.authenticateToken);
 crudRouter.get('/', userController.getAllUsers);
-crudRouter.get('/:email', userController.getUserByEmail);
 crudRouter.get('/id/:id', userController.getUserByID);
+crudRouter.get('/:email', userController.getUserByEmail);
 crudRouter.put('/:email', userController.updateUserByEmail);
 crudRouter.put('/changepassword/:email', userController.updateUserPasswordByEmail);
-crudRouter.delete('/:id', userController.deleteUserByID);
+crudRouter.delete('/removeuser/:id', userController.deleteUserByID);
 crudRouter.post('/uploadphoto/:email', upload.single('image'), userController.uploadProfilePhoto);
 
 routerML.post('/', upload.single('image'), mlController.predict);
