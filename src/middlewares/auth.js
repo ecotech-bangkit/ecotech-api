@@ -1,12 +1,13 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-require('dotenv').config();
 
 const generateTokenPair = (user) => {
   const accessToken = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
-  const refreshToken = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
+  const refreshToken = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '14d' });
   return { accessToken, refreshToken };
 };
+
 const verifyToken = (token) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
@@ -17,6 +18,7 @@ const verifyToken = (token) => {
     });
   });
 };
+
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 

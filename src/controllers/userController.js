@@ -136,7 +136,6 @@ const createNewUser = async (req, res) => {
       roleid: defaultRoleUser,
       image: '',
     });
-    // const { accessToken, refreshToken } = generateTokenPair({ id });
 
     res.status(201).json({
       statusCode: 201,
@@ -146,8 +145,6 @@ const createNewUser = async (req, res) => {
         name: body.name,
         email: body.email,
         password: hashedPassword,
-        // accessToken,
-        // refreshToken,
       },
     });
   } catch (error) {
