@@ -3,6 +3,7 @@ const multer = require('multer');
 const crudRouter = express.Router();
 const authRouter = express.Router();
 const routerML = express.Router();
+const noAuth = express.Router();
 const userController = require('../controllers/userController');
 const mlController = require('../controllers/mlController');
 const needAuthorization = require('../middlewares/auth');
@@ -13,6 +14,8 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024,
   },
 });
+
+noAuth.get('/',userController.getAllUsers);
 
 authRouter.post('/register', userController.createNewUser);
 authRouter.post('/login', userController.login);
@@ -29,4 +32,4 @@ crudRouter.post('/uploadphoto/:email', upload.single('image'), userController.up
 
 routerML.post('/', upload.single('image'), mlController.predict);
 
-module.exports = { crudRouter, authRouter, routerML };
+module.exports = { crudRouter, authRouter, routerML, noAuth };

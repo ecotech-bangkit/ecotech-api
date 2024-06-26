@@ -4,3 +4,9 @@ logs/
 build/
 npm-debug.log
 serviceaccountkey.json
+.vercel
+node_modules/
+dist/
+*.log
+*.test.js
+

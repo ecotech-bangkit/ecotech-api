@@ -1,7 +1,7 @@
 {
   "name": "ecotech-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "## Building API for authorization, authentication, and etc.",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
