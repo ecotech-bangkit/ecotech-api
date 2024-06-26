@@ -298,14 +298,22 @@ const login = async (req, res) => {
       });
       return;
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      res.status(400).json({
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+    // if (!isPasswordValid) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Invalid password',
+    //   });
+    //   return;
+    // }
+
+    if (password !== user.password) {
+      return res.status(400).json({
         statusCode: 400,
         error: 'Invalid password',
       });
-      return;
     }
+    
     const { accessToken, refreshToken } = generateTokenPair(user);
 
     await userModel.updateUserTokenByEmail(user.email, refreshToken);
