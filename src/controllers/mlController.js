@@ -20,7 +20,7 @@ class MLController {
         probability: probability.toFixed(2),
         prediction: probability >= 0.5 ? "This is not categorized as e-waste, you can't send it to the collector." : 'This is an e-waste, you can send it to the collector!',
       };
-      await uploadImageToStorage(req.file.buffer, req.file.originalname);
+      // await uploadImageToStorage(req.file.buffer, req.file.originalname);
 
       res.json(result);
     } catch (error) {
