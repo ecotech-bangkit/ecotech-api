@@ -38,4 +38,4 @@ async function predict(tensor) {
 
 //   console.log(`Image ${fileName} uploaded to Google Cloud Storage`);
 // }
-module.exports = { loadModel, predict, uploadImageToStorage };
+module.exports = { loadModel, predict };
