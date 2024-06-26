@@ -87,21 +87,21 @@ const createNewUser = async (req, res) => {
   const { name, email, password, repassword } = body;
 
   try {
-    if (name.length < 2) {
-      res.status(400).json({
-        statusCode: 400,
-        error: 'name character minimum 2 character',
-      });
-      return;
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      res.status(400).json({
-        statusCode: 400,
-        error: 'Invalid. Please use valid email format',
-      });
-      return;
-    }
+    // if (name.length < 2) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'name character minimum 2 character',
+    //   });
+    //   return;
+    // }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(email)) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Invalid. Please use valid email format',
+    //   });
+    //   return;
+    // }
     if (password !== repassword) {
       res.status(400).json({
         statusCode: 400,
@@ -109,13 +109,13 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    if (password.length < 8) {
-      res.status(400).json({
-        statusCode: 400,
-        error: 'Password character at least 8',
-      });
-      return;
-    }
+    // if (password.length < 8) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Password character at least 8',
+    //   });
+    //   return;
+    // }
     const registeredEmail = await userModel.getUserByEmail(body.email);
     const isEmailRegistered = registeredEmail.length > 0;
     if (isEmailRegistered) {
@@ -132,7 +132,7 @@ const createNewUser = async (req, res) => {
     await userModel.createNewUser({
       id,
       ...body,
-      password: hashedPassword,
+      password: password,
       roleid: defaultRoleUser,
       image: '',
     });
