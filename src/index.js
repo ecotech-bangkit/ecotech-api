@@ -28,7 +28,7 @@ app.use('/v1/users/', crudRouter);
 app.use('/v1/auth/', authRouter);
 app.use('/v1/predict/', routerML);
 app.use('/v1/', noAuth)
-app.get('/allusers/', (req, res) => {
+app.get('/', (req, res) => {
   res.send('Response Success!');
 });
 
