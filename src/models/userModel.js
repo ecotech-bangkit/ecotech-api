@@ -9,6 +9,11 @@ const createNewUser = (body) => {
   const values = [body.id, body.name, body.email, body.password, body.roleid];
   return connection.execute(query, values);
 };
+const createNewUserKolektor = (body) => {
+  const query = 'INSERT INTO users (id, name, alamat, nohp, email, password, roleid) VALUES (?, ?, ?, ?, ?, ?, ?)';
+  const values = [body.id, body.name, body.alamat, body.nohp, body.email, body.password, body.roleid];
+  return connection.execute(query, values);
+};
 const getUserByID = async (id) => {
   const query = 'SELECT * FROM users WHERE id = ?';
   const [user] = await connection.execute(query, [id]);
@@ -50,6 +55,7 @@ const updateUserTokenByEmail = (email, token) => {
 module.exports = {
   getAllUsers,
   createNewUser,
+  createNewUserKolektor,
   getUserByEmail,
   getUserByID,
   updateUserByEmail,

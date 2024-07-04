@@ -87,21 +87,21 @@ const createNewUser = async (req, res) => {
   const { name, email, password, repassword } = body;
 
   try {
-    // if (name.length < 2) {
-    //   res.status(400).json({
-    //     statusCode: 400,
-    //     error: 'name character minimum 2 character',
-    //   });
-    //   return;
-    // }
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(email)) {
-    //   res.status(400).json({
-    //     statusCode: 400,
-    //     error: 'Invalid. Please use valid email format',
-    //   });
-    //   return;
-    // }
+    if (name.length < 2) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'name character minimum 2 character',
+      });
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Invalid. Please use valid email format',
+      });
+      return;
+    }
     if (password !== repassword) {
       res.status(400).json({
         statusCode: 400,
@@ -125,10 +125,10 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(password, salt);
     const id = uuidv4();
-    const defaultRoleUser = 3;
+    const defaultRoleUser = 2;
     await userModel.createNewUser({
       id,
       ...body,
@@ -144,7 +144,82 @@ const createNewUser = async (req, res) => {
         id,
         name: body.name,
         email: body.email,
-        password: hashedPassword,
+        password: body.password,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
+    });
+  }
+};
+
+const createNewUserKolektor = async (req, res) => {
+  const { body } = req;
+  const { name, email, alamat, nohp, password, repassword } = body;
+
+  try {
+    if (name.length < 2) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'name character minimum 2 character',
+      });
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Invalid. Please use valid email format',
+      });
+      return;
+    }
+    if (password !== repassword) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Passwords do not match',
+      });
+      return;
+    }
+    // if (password.length < 8) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Password character at least 8',
+    //   });
+    //   return;
+    // }
+    const registeredEmail = await userModel.getUserByEmail(body.email);
+    const isEmailRegistered = registeredEmail.length > 0;
+    if (isEmailRegistered) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Email already registered',
+      });
+      return;
+    }
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(password, salt);
+    const id = uuidv4();
+    const defaultRoleUser = 3;
+    await userModel.createNewUserKolektor({
+      id,
+      ...body,
+      password: password,
+      roleid: defaultRoleUser,
+      image: '',
+    });
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Registration successful',
+      data: {
+        id,
+        name: body.name,
+        email: body.email,
+        password: body.password,
       },
     });
   } catch (error) {
@@ -430,6 +505,7 @@ module.exports = {
   getUserByEmail,
   getUserByID,
   createNewUser,
+  createNewUserKolektor,
   updateUserByEmail,
   updateUserPasswordByEmail,
   uploadProfilePhoto,
