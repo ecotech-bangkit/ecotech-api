@@ -5,8 +5,10 @@
 );
  CREATE TABLE `users` (
   `id` varchar(255) NOT NULL,
-  `name` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `alamat` varchar(100) DEFAULT NULL,
+  `nohp` int(13) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
   `roleid` int(11) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
