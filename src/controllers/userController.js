@@ -362,7 +362,7 @@ const deleteUserByID = async (req, res) => {
   }
 };
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password} = req.body;
 
   try {
     const [user] = await userModel.getUserByEmail(email);
@@ -396,8 +396,14 @@ const login = async (req, res) => {
     res.status(200).json({
       statusCode: 200,
       message: 'Login successful',
-      accessToken,
-      refreshToken,
+      data: {
+        "name": user.name,
+        "email": user.email,
+        "roleid": user.roleid,
+        accessToken,
+        refreshToken,
+      }
+
     });
   } catch (error) {
     res.status(500).json({
@@ -417,6 +423,7 @@ const logout = async (req, res) => {
         statusCode: 401,
         error: 'Unauthorized',
       });
+      return
     }
     await userModel.logout(userId);
 
@@ -430,6 +437,7 @@ const logout = async (req, res) => {
       error: 'Internal Server Error',
       errorMessage: error,
     });
+    return
   }
 };
 
