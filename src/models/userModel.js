@@ -14,6 +14,12 @@ const createNewUserKolektor = (body) => {
   const values = [body.id, body.name, body.alamat, body.nohp, body.email, body.password, body.roleid];
   return connection.execute(query, values);
 };
+const createOrderEwaste = (body) => {
+  const query = 'INSERT INTO penyetoran (penyetor_id, kolektor_id) VALUES (?,?)'
+  const values = [body.penyetor_id, body.kolektor_id]
+  return connection.execute(query, values)
+}
+
 const getUserByID = async (id) => {
   const query = 'SELECT * FROM users WHERE id = ?';
   const [user] = await connection.execute(query, [id]);
@@ -61,6 +67,7 @@ module.exports = {
   getAllUsers,
   createNewUser,
   createNewUserKolektor,
+  createOrderEwaste,
   getUserByEmail,
   getUserByID,
   getAllUsersKolektor,

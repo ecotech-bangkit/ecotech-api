@@ -7,6 +7,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME;
 const { Storage } = require('@google-cloud/storage');
 const { generateTokenPair } = require('../middlewares/auth');
+const { data } = require('@tensorflow/tfjs');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -258,6 +259,55 @@ const createNewUserKolektor = async (req, res) => {
   }
 };
 
+const createOrderEwaste = async (req, res) => {
+  const {body} = req;
+  const {penyetor_id, kolektor_id} = body
+
+  if (!penyetor_id) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Data Penyetor tidak ditemukan',
+    });
+    return;
+  }
+  if (!kolektor_id) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Data Kolektor tidak ditemukan',
+    });
+    return;
+  }
+  if (!penyetor_id && !kolektor_id) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Data Penyetor dan Kolektor tidak ditemukan',
+    });
+    return;
+  }
+
+  try {
+    await userModel.createOrderEwaste({
+      "penyetor_id": body.penyetor_id,
+      "kolektor_id": body.kolektor_id
+    })
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Order created successfully',
+      data: {
+        body
+      }
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
+    });
+  }
+}
+
 const updateUserByEmail = async (req, res) => {
   const { email } = req.params;
   const { name } = req.body;
@@ -348,7 +398,7 @@ const updateUserPasswordByEmail = async (req, res) => {
     console.error(error);
     res.status(500).json({
       statusCode: 500,
-      error: 'Internal Server Error',
+      error: 'Internal Server Error', 
       errorMessage: error,
       message: error.sqlMessage,
     });
@@ -541,6 +591,7 @@ module.exports = {
   getUserByID,
   createNewUser,
   createNewUserKolektor,
+  createOrderEwaste,
   updateUserByEmail,
   updateUserPasswordByEmail,
   uploadProfilePhoto,
