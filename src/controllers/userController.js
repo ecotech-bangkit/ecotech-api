@@ -427,7 +427,6 @@ const login = async (req, res) => {
         "email": user.email,
         "roleid": user.roleid,
         accessToken,
-        refreshToken,
       }
 
     });
