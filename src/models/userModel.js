@@ -19,6 +19,11 @@ const getUserByID = async (id) => {
   const [user] = await connection.execute(query, [id]);
   return user[0];
 };
+const getAllUsersKolektor = async (roleid) =>{
+  const query = 'SELECT id, name, alamat, nohp, roleid FROM users WHERE roleid = ?';
+  const [user] = await connection.execute(query,[roleid])
+  return [user];
+}
 const getUserByEmail = async (email) => {
   const query = 'SELECT * FROM users WHERE email = ?';
   const [user] = await connection.execute(query, [email]);
@@ -58,6 +63,7 @@ module.exports = {
   createNewUserKolektor,
   getUserByEmail,
   getUserByID,
+  getAllUsersKolektor,
   updateUserByEmail,
   updatePhotoProfileByEmail,
   updateUserPasswordByEmail,

@@ -82,6 +82,32 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
+const getAllKolektor = async (req,res) => {
+  try {
+    const [dataKolektor] = await userModel.getAllUsersKolektor(3)
+    if (!dataKolektor){
+      res.status(404).json({
+        statusCode: 404,
+        message: "Users with Kolektor role not found"
+      })
+      return;
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'User retrieved successfully',
+      data: dataKolektor,
+    });
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
+    });
+  }
+}
+
 const createNewUser = async (req, res) => {
   const { body } = req;
   const { name, email, password, repassword } = body;
@@ -508,8 +534,10 @@ const uploadProfilePhoto = async (req, res) => {
   }
 };
 
+
 module.exports = {
   getAllUsers,
+  getAllKolektor,
   getUserByEmail,
   getUserByID,
   createNewUser,
