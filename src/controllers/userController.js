@@ -261,7 +261,7 @@ const createNewUserKolektor = async (req, res) => {
 
 const createOrderEwaste = async (req, res) => {
   const {body} = req;
-  const {penyetor_id, kolektor_id} = body
+  const {penyetor_id, kolektor_id, item_image} = body
 
   if (!penyetor_id) {
     res.status(400).json({
@@ -284,11 +284,18 @@ const createOrderEwaste = async (req, res) => {
     });
     return;
   }
+  if (!item_image) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Gambar tidak ditemukan'
+    })
+  }
 
   try {
     await userModel.createOrderEwaste({
       "penyetor_id": body.penyetor_id,
-      "kolektor_id": body.kolektor_id
+      "kolektor_id": body.kolektor_id,
+      "item_image": body.item_image
     })
 
     res.status(201).json({
@@ -302,7 +309,7 @@ const createOrderEwaste = async (req, res) => {
     console.error(error);
     res.status(500).json({
       statusCode: 500,
-      error: 'Internal Server Error',
+      error: 'Error while creating ewaste order',
       errorMessage: error.sqlMessage,
     });
   }
