@@ -109,6 +109,23 @@ const getAllKolektor = async (req,res) => {
   }
 }
 
+const getAllOrderEwaste = async (req, res) => {
+  try {
+    const [data] = await userModel.getAllOrderEwaste()
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Get all data successfully',
+      data: data
+    })
+  } catch (error) {
+    res.json({
+      statusCode : 500,
+      message: 'Internal server error',
+      error: error.sqlMessage
+    })
+  }
+}
+
 const createNewUser = async (req, res) => {
   const { body } = req;
   const { name, email, password, repassword } = body;
@@ -594,6 +611,7 @@ const uploadProfilePhoto = async (req, res) => {
 module.exports = {
   getAllUsers,
   getAllKolektor,
+  getAllOrderEwaste,
   getUserByEmail,
   getUserByID,
   createNewUser,

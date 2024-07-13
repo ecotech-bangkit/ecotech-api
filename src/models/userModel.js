@@ -19,7 +19,6 @@ const createOrderEwaste = (body) => {
   const values = [body.penyetor_id, body.kolektor_id, body.item_image]
   return connection.execute(query, values)
 }
-
 const getUserByID = async (id) => {
   const query = 'SELECT * FROM users WHERE id = ?';
   const [user] = await connection.execute(query, [id]);
@@ -35,6 +34,10 @@ const getUserByEmail = async (email) => {
   const [user] = await connection.execute(query, [email]);
   return user;
 };
+const getAllOrderEwaste = async () => {
+  const query = 'SELECT * FROM penyetoran'
+  return await connection.execute(query)
+}
 const updateUserByEmail = (email, { name }) => {
   const query = 'UPDATE users SET name = ? WHERE email = ?';
   const values = [name, email];
@@ -68,11 +71,11 @@ module.exports = {
   createNewUser,
   createNewUserKolektor,
   createOrderEwaste,
+  getAllOrderEwaste,
   getUserByEmail,
   getUserByID,
   getAllUsersKolektor,
   updateUserByEmail,
-  updateStatusOrderEwaste,
   updatePhotoProfileByEmail,
   updateUserPasswordByEmail,
   deleteUserByID,

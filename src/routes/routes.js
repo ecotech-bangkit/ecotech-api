@@ -17,6 +17,7 @@ const upload = multer({
 
 noAuth.get('/',userController.getAllUsers);
 noAuth.get('/kolektor', userController.getAllKolektor);
+noAuth.get('/orders', userController.getAllOrderEwaste)
 
 authRouter.post('/register', userController.createNewUser);
 authRouter.post('/registerkolektor', userController.createNewUserKolektor)
