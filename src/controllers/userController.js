@@ -361,6 +361,38 @@ const createOrderEwaste = async (req, res) => {
   }
 }
 
+const updateStatusOrderEwasteAccepted = async (req, res) => {
+  const {id} = req.params;
+  // const {status} = req.body;
+  
+  try {
+  const order = await userModel.getOrderEwasteByID(id)
+  if (!order) {
+    res.status(404).json({
+      statusCode: 404,
+      error: 'ID tx not found'
+    })
+    return
+  }
+
+    const status = 'Diterima'
+    await userModel.updateStatusOrderEwaste(id, {status: status})
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status updated successfully'
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal server error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+
 const updateUserByEmail = async (req, res) => {
   const { email } = req.params;
   const { name } = req.body;
@@ -647,6 +679,7 @@ module.exports = {
   createNewUser,
   createNewUserKolektor,
   createOrderEwaste,
+  updateStatusOrderEwasteAccepted,
   updateUserByEmail,
   updateUserPasswordByEmail,
   uploadProfilePhoto,
