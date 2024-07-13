@@ -43,6 +43,11 @@ const getOrderEwasteByID = async (id) => {
   const [values]= await connection.execute(query, [id])
   return values[0]
 }
+const getOrderEwasteByStatus = async (status) => {
+  const query = 'SELECT * FROM penyetoran WHERE status = ? '
+  const [values]= await connection.execute(query, [status])
+  return values
+}
 const updateStatusOrderEwaste = (id, {status}) => {
   const query = 'UPDATE penyetoran SET status = ? WHERE id =?';
   const values = [status, id]
@@ -86,6 +91,7 @@ module.exports = {
   getUserByEmail,
   getUserByID,
   getAllUsersKolektor,
+  getOrderEwasteByStatus,
   updateStatusOrderEwaste,
   updateUserByEmail,
   updatePhotoProfileByEmail,

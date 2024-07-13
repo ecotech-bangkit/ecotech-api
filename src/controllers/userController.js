@@ -138,6 +138,35 @@ const getOrderEwasteByID = async (req, res) => {
   }
 }
 
+const getOrderEwasteByStatus = async (req, res) => {
+  const { status } = req.params
+
+  try {
+    const [data] = await userModel.getOrderEwasteByStatus(status)
+    if (!data) {
+      res.status(404).json({
+        statusCode: 404,
+        message: 'Status order not found'
+      })
+      return
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+
 const getAllOrderEwaste = async (req, res) => {
   try {
     const [data] = await userModel.getAllOrderEwaste()
@@ -674,6 +703,7 @@ module.exports = {
   getAllKolektor,
   getAllOrderEwaste,
   getOrderEwasteByID,
+  getOrderEwasteByStatus,
   getUserByEmail,
   getUserByID,
   createNewUser,

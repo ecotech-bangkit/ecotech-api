@@ -19,6 +19,7 @@ noAuth.get('/',userController.getAllUsers);
 noAuth.get('/kolektor', userController.getAllKolektor);
 noAuth.get('/orders', userController.getAllOrderEwaste)
 noAuth.get('/orders/:id', userController.getOrderEwasteByID)
+noAuth.get('/orders/status/:status', userController.getOrderEwasteByStatus)
 noAuth.put('/setor/:id', userController.updateStatusOrderEwasteAccepted)
 
 authRouter.post('/register', userController.createNewUser);
