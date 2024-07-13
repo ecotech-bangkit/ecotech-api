@@ -83,7 +83,7 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-const getAllKolektor = async (req,res) => {
+const getAllKolektor = async (req, res) => {
   try {
     const [dataKolektor] = await userModel.getAllUsersKolektor(3)
     if (!dataKolektor){
@@ -106,6 +106,35 @@ const getAllKolektor = async (req,res) => {
       error: 'Internal Server Error',
       errorMessage: error.sqlMessage,
     });
+  }
+}
+
+const getOrderEwasteByID = async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const data = await userModel.getOrderEwasteByID(id)
+
+    if (!data) {
+      res.status(404).json({
+        statusCode: 404,
+        message: 'ID order not found'
+      })
+      return
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'User retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
   }
 }
 
@@ -612,6 +641,7 @@ module.exports = {
   getAllUsers,
   getAllKolektor,
   getAllOrderEwaste,
+  getOrderEwasteByID,
   getUserByEmail,
   getUserByID,
   createNewUser,

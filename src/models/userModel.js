@@ -38,6 +38,11 @@ const getAllOrderEwaste = async () => {
   const query = 'SELECT * FROM penyetoran'
   return await connection.execute(query)
 }
+const getOrderEwasteByID = async (id) => {
+  const query = 'SELECT * FROM penyetoran WHERE id = ? '
+  const [values]= await connection.execute(query, [id])
+  return values[0]
+}
 const updateUserByEmail = (email, { name }) => {
   const query = 'UPDATE users SET name = ? WHERE email = ?';
   const values = [name, email];
@@ -72,6 +77,7 @@ module.exports = {
   createNewUserKolektor,
   createOrderEwaste,
   getAllOrderEwaste,
+  getOrderEwasteByID,
   getUserByEmail,
   getUserByID,
   getAllUsersKolektor,
