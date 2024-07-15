@@ -166,15 +166,16 @@ const getOrderEwasteByStatus = async (req, res) => {
   }
 }
 
-
 const getAllOrderEwaste = async (req, res) => {
   try {
     const [data] = await userModel.getAllOrderEwaste()
+
     res.status(200).json({
       statusCode: 200,
       message: 'Get all data successfully',
       data: data
     })
+
   } catch (error) {
     res.json({
       statusCode : 500,
@@ -277,6 +278,13 @@ const createNewUserKolektor = async (req, res) => {
         statusCode: 400,
         error: 'Invalid. Please use valid email format',
       });
+      return;
+    }
+    if (nohp.length > 15) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'No HP values must not greater than 15'
+      })
       return;
     }
     if (password !== repassword) {
@@ -392,7 +400,6 @@ const createOrderEwaste = async (req, res) => {
 
 const updateStatusOrderEwasteAccepted = async (req, res) => {
   const {id} = req.params;
-  // const {status} = req.body;
   
   try {
   const order = await userModel.getOrderEwasteByID(id)
@@ -420,7 +427,6 @@ const updateStatusOrderEwasteAccepted = async (req, res) => {
     })
   }
 }
-
 
 const updateUserByEmail = async (req, res) => {
   const { email } = req.params;
