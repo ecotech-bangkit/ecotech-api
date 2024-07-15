@@ -109,6 +109,30 @@ const getAllKolektor = async (req, res) => {
   }
 }
 
+const getAllPenyetor = async (req, res) => {
+  try {
+    const [penyetor] = await userModel.getAllUsersPenyetor(2)
+    if (!penyetor) {
+      res.status(404).json({
+        statusCode: 200,
+        message: 'Users with role penyetor not found',
+      })
+      return;
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Get all penyetor data success',
+      data: penyetor
+    })
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
 const getOrderEwasteByID = async (req, res) => {
   const { id } = req.params
 
@@ -146,7 +170,7 @@ const getOrderEwasteByStatus = async (req, res) => {
     if (!data) {
       res.status(404).json({
         statusCode: 404,
-        message: 'Status order not found'
+        message: 'Orders not found'
       })
       return
     }
@@ -416,7 +440,8 @@ const updateStatusOrderEwasteAccepted = async (req, res) => {
 
     res.status(200).json({
       statusCode: 200,
-      message: 'Status updated successfully'
+      message: 'Status updated successfully',
+      data: order
     })
 
   } catch (error) {
@@ -707,6 +732,7 @@ const uploadProfilePhoto = async (req, res) => {
 module.exports = {
   getAllUsers,
   getAllKolektor,
+  getAllPenyetor,
   getAllOrderEwaste,
   getOrderEwasteByID,
   getOrderEwasteByStatus,

@@ -29,6 +29,11 @@ const getAllUsersKolektor = async (roleid) =>{
   const [user] = await connection.execute(query,[roleid])
   return [user];
 }
+const getAllUsersPenyetor = async (roleid) =>{
+  const query = 'SELECT id, name, alamat, nohp, roleid FROM users WHERE roleid = ?';
+  const [user] = await connection.execute(query,[roleid])
+  return [user];
+}
 const getUserByEmail = async (email) => {
   const query = 'SELECT * FROM users WHERE email = ?';
   const [user] = await connection.execute(query, [email]);
@@ -91,6 +96,7 @@ module.exports = {
   getUserByEmail,
   getUserByID,
   getAllUsersKolektor,
+  getAllUsersPenyetor,
   getOrderEwasteByStatus,
   updateStatusOrderEwaste,
   updateUserByEmail,
