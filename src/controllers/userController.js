@@ -410,9 +410,7 @@ const createOrderEwaste = async (req, res) => {
     res.status(201).json({
       statusCode: 201,
       message: 'Order created successfully',
-      data: {
-        body
-      }
+      data: body
     })
   } catch (error) {
     console.error(error);
