@@ -370,21 +370,23 @@ const createOrderEwaste = async (req, res) => {
   const {body} = req;
   const {penyetor_id, kolektor_id, item_image} = body
 
-  if (!penyetor_id) {
+  const checkPenyetor = await userModel.getUserByID(penyetor_id)
+  const checkKolektor = await userModel.getUserByID(kolektor_id)
+  if (!checkPenyetor) {
     res.status(400).json({
       statusCode: 400,
       error: 'Data Penyetor tidak ditemukan',
     });
     return;
   }
-  if (!kolektor_id) {
+  if (!checkKolektor) {
     res.status(400).json({
       statusCode: 400,
       error: 'Data Kolektor tidak ditemukan',
     });
     return;
   }
-  if (!penyetor_id && !kolektor_id) {
+  if (!checkPenyetor && !checkKolektor) {
     res.status(400).json({
       statusCode: 400,
       error: 'Data Penyetor dan Kolektor tidak ditemukan',
@@ -441,7 +443,66 @@ const updateStatusOrderEwasteAccepted = async (req, res) => {
     res.status(200).json({
       statusCode: 200,
       message: 'Status updated successfully',
-      data: order
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal server error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const updateStatusOrderEwasteRejected = async (req, res) => {
+  const {id} = req.params;
+  
+  try {
+  const order = await userModel.getOrderEwasteByID(id)
+  if (!order) {
+    res.status(404).json({
+      statusCode: 404,
+      error: 'ID tx not found'
+    })
+    return
+  }
+
+    const status = 'Ditolak'
+    await userModel.updateStatusOrderEwaste(id, {status: status})
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status updated successfully',
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal server error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const updateStatusOrderEwasteFinished = async (req, res) => {
+  const {id} = req.params;
+  
+  try {
+  const order = await userModel.getOrderEwasteByID(id)
+  if (!order) {
+    res.status(404).json({
+      statusCode: 404,
+      error: 'ID tx not found'
+    })
+    return
+  }
+
+    const status = 'Selesai'
+    await userModel.updateStatusOrderEwaste(id, {status: status})
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status updated successfully',
     })
 
   } catch (error) {
@@ -742,6 +803,8 @@ module.exports = {
   createNewUserKolektor,
   createOrderEwaste,
   updateStatusOrderEwasteAccepted,
+  updateStatusOrderEwasteRejected,
+  updateStatusOrderEwasteFinished,
   updateUserByEmail,
   updateUserPasswordByEmail,
   uploadProfilePhoto,

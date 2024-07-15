@@ -21,7 +21,9 @@ noAuth.get('/penyetor', userController.getAllPenyetor);
 noAuth.get('/orders', userController.getAllOrderEwaste);
 noAuth.get('/orders/:id', userController.getOrderEwasteByID);
 noAuth.get('/orders/status/:status', userController.getOrderEwasteByStatus);
-noAuth.put('/setor/:id', userController.updateStatusOrderEwasteAccepted);
+noAuth.put('/setor/accept/:id', userController.updateStatusOrderEwasteAccepted);
+noAuth.put('/setor/reject/:id', userController.updateStatusOrderEwasteRejected);
+noAuth.put('/setor/finish/:id', userController.updateStatusOrderEwasteFinished);
 
 authRouter.post('/register', userController.createNewUser);
 authRouter.post('/registerkolektor', userController.createNewUserKolektor);
