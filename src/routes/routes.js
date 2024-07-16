@@ -27,7 +27,7 @@ noAuth.put('/setor/finish/:id', userController.updateStatusOrderEwasteFinished);
 
 authRouter.post('/register', userController.createNewUser);
 authRouter.post('/registerkolektor', userController.createNewUserKolektor);
-authRouter.post('/submitewaste',userController.createOrderEwaste);
+authRouter.post('/submitewaste', upload.single('image'),userController.createOrderEwaste);
 authRouter.post('/login', userController.login);
 authRouter.post('/logout', needAuthorization.authenticateToken, userController.logout);
 

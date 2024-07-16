@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME;
-const { Storage } = require('@google-cloud/storage');
+// const { Storage } = require('@google-cloud/storage');
+const { uploadImageToS3 } = require('../modules/imgUploadS3')
 const { generateTokenPair } = require('../middlewares/auth');
 const { data } = require('@tensorflow/tfjs');
 
@@ -367,8 +368,7 @@ const createNewUserKolektor = async (req, res) => {
 };
 
 const createOrderEwaste = async (req, res) => {
-  const {body} = req;
-  const {penyetor_id, kolektor_id, item_image} = body
+  const {penyetor_id, kolektor_id} = req.body
 
   const checkPenyetor = await userModel.getUserByID(penyetor_id)
   const checkKolektor = await userModel.getUserByID(kolektor_id)
@@ -400,17 +400,25 @@ const createOrderEwaste = async (req, res) => {
     })
   }
 
+  const file = req.file;
+  if (!file) {
+    return res.status(400).json({ error: 'Image file is required' });
+  }
+
   try {
+    const s3Result = await uploadImageToS3(file.buffer, file.originalname, file.mimetype);
+    const imageUrl = s3Result.Location;
+
     await userModel.createOrderEwaste({
       "penyetor_id": body.penyetor_id,
       "kolektor_id": body.kolektor_id,
-      "item_image": body.item_image
+      "item_image": imageUrl
     })
 
     res.status(201).json({
       statusCode: 201,
       message: 'Order created successfully',
-      data: body
+      data:  { penyetor_id, kolektor_id, item_image: imageUrl },
     })
   } catch (error) {
     console.error(error);
