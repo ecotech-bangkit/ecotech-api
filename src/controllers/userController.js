@@ -393,12 +393,6 @@ const createOrderEwaste = async (req, res) => {
     });
     return;
   }
-  if (!item_image) {
-    res.status(400).json({
-      statusCode: 400,
-      error: 'Gambar tidak ditemukan'
-    })
-  }
 
   const file = req.file;
   if (!file) {

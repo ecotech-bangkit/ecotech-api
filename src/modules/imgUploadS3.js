@@ -11,7 +11,7 @@ const s3 = new AWS.S3({
 
 const uploadImageToS3 = (fileBuffer, fileName, mimeType) => {
   const params = {
-    Bucket: 'your-bucket-name',
+    Bucket: process.env.AWS_BUCKET_NAME,
     Key: `images/${fileName}`,
     Body: fileBuffer,
     ContentType: mimeType,
