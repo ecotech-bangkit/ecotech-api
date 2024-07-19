@@ -402,11 +402,11 @@ const createOrderEwaste = async (req, res) => {
   try {
     const s3Result = await uploadImageToS3(file.buffer, file.originalname, file.mimetype);
     const imageUrl = s3Result.Location;
-
+    console.log(`imageUrlnya: ${imageUrl}`)
     await userModel.createOrderEwaste({
-      "penyetor_id": body.penyetor_id,
-      "kolektor_id": body.kolektor_id,
-      "item_image": imageUrl
+      penyetor_id,
+      kolektor_id,
+      item_image: imageUrl
     })
 
     res.status(201).json({
@@ -643,6 +643,7 @@ const deleteUserByID = async (req, res) => {
     });
   }
 };
+
 const login = async (req, res) => {
   const { email, password} = req.body;
 

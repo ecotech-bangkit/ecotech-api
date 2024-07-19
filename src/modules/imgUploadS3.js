@@ -19,3 +19,8 @@ const uploadImageToS3 = (fileBuffer, fileName, mimeType) => {
 
   return s3.upload(params).promise();
 };
+
+module.exports = {
+  upload,
+  uploadImageToS3
+}
