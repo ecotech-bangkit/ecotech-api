@@ -50,8 +50,13 @@ const getOrderEwasteByID = async (id) => {
 }
 const getOrderEwasteByStatus = async (status) => {
   const query = 'SELECT * FROM penyetoran WHERE status = ? '
-  const [values]= await connection.execute(query, [status])
+  const values = await connection.execute(query, [status])
   return values
+}
+const getOrderEwasteByKolektorIdAndStatusMenunggu = async (kolektor_id) => {
+  const query = 'SELECT * FROM penyetoran WHERE status = ? AND kolektor_id = ?'
+  const [rows] = await connection.execute(query, ['Menunggu', kolektor_id])
+  return [rows]
 }
 const updateStatusOrderEwaste = (id, {status}) => {
   const query = 'UPDATE penyetoran SET status = ? WHERE id =?';
@@ -98,6 +103,7 @@ module.exports = {
   getAllUsersKolektor,
   getAllUsersPenyetor,
   getOrderEwasteByStatus,
+  getOrderEwasteByKolektorIdAndStatusMenunggu,
   updateStatusOrderEwaste,
   updateUserByEmail,
   updatePhotoProfileByEmail,
