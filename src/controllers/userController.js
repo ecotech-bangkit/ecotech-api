@@ -480,7 +480,10 @@ const updateStatusOrderEwasteAccepted = async (req, res) => {
   }
 
     const status = 'Diterima'
-    await userModel.updateStatusOrderEwaste(id, {status: status})
+    await userModel.updateStatusOrderEwaste(id, { status })
+
+    const cacheKey = `orders_${order.kolektor_id}`;
+    cache.del(cacheKey);
 
     res.status(200).json({
       statusCode: 200,
@@ -510,7 +513,7 @@ const updateStatusOrderEwasteRejected = async (req, res) => {
   }
 
     const status = 'Ditolak'
-    await userModel.updateStatusOrderEwaste(id, {status: status})
+    await userModel.updateStatusOrderEwaste(id, { status })
 
     res.status(200).json({
       statusCode: 200,
