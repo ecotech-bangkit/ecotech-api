@@ -54,7 +54,7 @@ const getOrderEwasteByStatus = async (status) => {
   return values
 }
 const getOrderEwasteByKolektorIdAndStatusMenunggu = async (kolektor_id) => {
-  const query = 'SELECT penyetoran.penyetor_id, users.name AS penyetor_name, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.penyetor_id WHERE status = ? AND kolektor_id = ?'
+  const query = 'SELECT penyetoran.id, penyetoran.penyetor_id, users.name AS penyetor_name, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.penyetor_id WHERE status = ? AND kolektor_id = ?'
   const[rows] = await connection.execute(query, ['Menunggu', kolektor_id])
   return [rows]
 }
