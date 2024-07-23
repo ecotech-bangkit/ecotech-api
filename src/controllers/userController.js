@@ -444,7 +444,7 @@ const createOrderEwaste = async (req, res) => {
     await userModel.createOrderEwaste({
       penyetor_id,
       kolektor_id,
-      item_image,
+      item_image: imageUrl,
       status
     })
 
