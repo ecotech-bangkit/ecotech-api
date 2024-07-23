@@ -440,16 +440,18 @@ const createOrderEwaste = async (req, res) => {
     const s3Result = await uploadImageToS3(file.buffer, file.originalname, file.mimetype);
     const imageUrl = s3Result.Location;
     console.log(`imageUrl res: ${imageUrl}`)
+    const status = 'Menunggu'
     await userModel.createOrderEwaste({
       penyetor_id,
       kolektor_id,
       item_image,
+      status
     })
 
     res.status(201).json({
       statusCode: 201,
       message: 'Order created successfully',
-      data:  { penyetor_id, kolektor_id, item_image: imageUrl },
+      data:  { penyetor_id, kolektor_id, item_image: imageUrl, status },
     })
   } catch (error) {
     console.error(error);
