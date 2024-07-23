@@ -10,10 +10,16 @@ class MLController {
       const canvas = createCanvas(256, 256);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(image, 0, 0, 256, 256);
-      const tensor = tf.browser.fromPixels(canvas).expandDims();
+      // const tensor = tf.browser.fromPixels(canvas).expandDims();
       const loadedModel = await loadModel();
-      const predictions = loadedModel.predict(tensor);
-      const probability = predictions.dataSync()[0];
+      // const predictions = loadedModel.predict(tensor);
+      // const probability = predictions.dataSync()[0];
+
+      const probability = tf.tidy(() => {
+        const tensor = tf.browser.fromPixels(canvas).expandDims();
+        const predictions = loadedModel.predict(tensor);
+        return predictions.dataSync()[0]; 
+      });
 
       const result = {
         statusCode: 200,
@@ -25,7 +31,11 @@ class MLController {
       res.json(result);
     } catch (error) {
       console.error('Prediction error:', error);
-      res.status(500).json({ error: 'Failed to process image' });
+      res.status(500).json({ 
+      error: 'Failed to process image',
+      message: error.message,
+      stack: error.stack
+    });
     }
   }
 }
