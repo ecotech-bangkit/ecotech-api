@@ -194,7 +194,6 @@ const getOrderEwasteByStatus = async (req, res) => {
 }
 
 const getOrderEwasteByKolektorIdAndStatusMenunggu = async (req, res) => {
-  
   const { kolektor_id } = req.query
 
   if (!kolektor_id) {
@@ -204,33 +203,29 @@ const getOrderEwasteByKolektorIdAndStatusMenunggu = async (req, res) => {
     });
   }
 
-  const cacheKey = `orders_${kolektor_id}`;
-  let data = cache.get(cacheKey);
-  if(!data){
-    try {
-      [data] = await userModel.getOrderEwasteByKolektorIdAndStatusMenunggu(kolektor_id)
-      if (!data) {
-        res.status(404).json({
-          statusCode: 404,
-          message: 'Orders not found'
-        })
-        return
-      }
-      cache.set(cacheKey, data);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      res.status(500).json({
-        statusCode: 500,
-        message: 'Internal Server Error',
-        errorMessage: error.sqlMessage
+  try {
+    const [data] = await userModel.getOrderEwasteByKolektorIdAndStatusMenunggu(kolektor_id)
+    if (!data) {
+      res.status(404).json({
+      statusCode: 404,
+      message: 'Orders not found'
       })
+    return
     }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
   }
-  res.status(200).json({
-    statusCode: 200,
-    message: 'Orders retrieved successfully',
-    data: data
-  })
 }
 
 const getAllOrderEwaste = async (req, res) => {
@@ -444,11 +439,11 @@ const createOrderEwaste = async (req, res) => {
   try {
     const s3Result = await uploadImageToS3(file.buffer, file.originalname, file.mimetype);
     const imageUrl = s3Result.Location;
-    console.log(`imageUrlnya: ${imageUrl}`)
+    console.log(`imageUrl res: ${imageUrl}`)
     await userModel.createOrderEwaste({
       penyetor_id,
       kolektor_id,
-      item_image: imageUrl
+      item_image,
     })
 
     res.status(201).json({

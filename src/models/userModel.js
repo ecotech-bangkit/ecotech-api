@@ -15,8 +15,8 @@ const createNewUserKolektor = (body) => {
   return connection.execute(query, values);
 };
 const createOrderEwaste = (body) => {
-  const query = 'INSERT INTO penyetoran (penyetor_id, kolektor_id, item_image) VALUES (?,?,?)'
-  const values = [body.penyetor_id, body.kolektor_id, body.item_image]
+  const query = 'INSERT INTO penyetoran (penyetor_id, kolektor_id, item_image, status) VALUES (?,?,?,?)'
+  const values = [body.penyetor_id, body.kolektor_id, body.item_image, 'Menunggu']
   return connection.execute(query, values)
 }
 const getUserByID = async (id) => {
