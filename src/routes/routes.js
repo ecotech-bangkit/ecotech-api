@@ -22,7 +22,7 @@ noAuth.get('/orders', userController.getAllOrderEwaste);
 noAuth.get('/orders/:id', userController.getOrderEwasteByID);
 noAuth.get('/orders/status/query/:status', userController.getOrderEwasteByStatus);
 noAuth.get('/orders/status/id/menunggu', userController.getOrderEwasteByKolektorIdAndStatusMenunggu);
-noAuth.get('/orders/status/id/all', userController.getAllStatusOrderEwasteByKolektorId)
+noAuth.get('/orders/status/id/kolektor/all', userController.getAllStatusOrderEwasteByKolektorId)
 noAuth.get('/orders/status/id/penyetor/all', userController.getAllStatusOrderEwasteByPenyetorId)
 noAuth.put('/setor/accept/:id', userController.updateStatusOrderEwasteAccepted);
 noAuth.put('/setor/reject/:id', userController.updateStatusOrderEwasteRejected);
