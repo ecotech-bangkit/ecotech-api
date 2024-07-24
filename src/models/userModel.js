@@ -68,6 +68,40 @@ const getAllStatusOrderEwasteByPenyetorId = async (penyetor_id) => {
   const[rows] = await connection.execute(query, [penyetor_id])
   return [rows]
 } 
+const getCountAllStatusMenungguforPenyetor = async (penyetor_id, { status }) => {
+  const query = `
+    SELECT COUNT(*) AS totalCount
+    FROM penyetoran 
+    INNER JOIN users ON users.id = penyetoran.kolektor_id 
+    WHERE penyetoran.penyetor_id = ? AND status = ?
+  `;
+  const values = [penyetor_id, status]
+
+  try {
+    const [rows] = await connection.execute(query, values);
+    return rows[0].totalCount;
+  } catch (error) {
+    console.error('Database error:', error)
+    throw error
+  }
+}
+const getCountAllStatusDiterimaforPenyetor = async (penyetor_id, { status }) => {
+  const query = `
+    SELECT COUNT(*) AS totalCount
+    FROM penyetoran 
+    INNER JOIN users ON users.id = penyetoran.kolektor_id 
+    WHERE penyetoran.penyetor_id = ? AND status = ?
+  `;
+  const values = [penyetor_id, status]
+
+  try {
+    const [rows] = await connection.execute(query, values);
+    return rows[0].totalCount;
+  } catch (error) {
+    console.error('Database error:', error)
+    throw error
+  }
+}
 const updateStatusOrderEwaste = (id, {status}) => {
   const query = 'UPDATE penyetoran SET status = ? WHERE id = ?';
   const values = [status, id]
@@ -116,6 +150,8 @@ module.exports = {
   getOrderEwasteByKolektorIdAndStatusMenunggu,
   getAllStatusOrderEwasteByKolektorId,
   getAllStatusOrderEwasteByPenyetorId,
+  getCountAllStatusMenungguforPenyetor,
+  getCountAllStatusDiterimaforPenyetor,
   updateStatusOrderEwaste,
   updateUserByEmail,
   updatePhotoProfileByEmail,

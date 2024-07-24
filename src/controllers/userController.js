@@ -298,6 +298,77 @@ const getAllStatusOrderEwasteByPenyetorId = async (req, res) => {
   }
 }
 
+const getCountAllStatusMenungguforPenyetor = async (req, res) => {
+  const { penyetor_id } = req.query
+
+  if (!penyetor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'penyetor_id is required',
+    });
+  }
+
+  try {
+    const status = 'Menunggu'
+    const totalCount = await userModel.getCountAllStatusMenungguforPenyetor(penyetor_id, {status})
+    if (totalCount === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: 'No orders found',
+        total: 0
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      total: totalCount
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+const getCountAllStatusDiterimaforPenyetor = async (req, res) => {
+  const { penyetor_id } = req.query
+
+  if (!penyetor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'penyetor_id is required',
+    });
+  }
+
+  try {
+    const status = 'Diterima'
+    const totalCount = await userModel.getCountAllStatusMenungguforPenyetor(penyetor_id, {status})
+    if (totalCount === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: 'No orders found',
+        total: 0
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      total: totalCount
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
 const getAllOrderEwaste = async (req, res) => {
   try {
     const [data] = await userModel.getAllOrderEwaste()
@@ -912,6 +983,8 @@ module.exports = {
   getOrderEwasteByKolektorIdAndStatusMenunggu,
   getAllStatusOrderEwasteByKolektorId,
   getAllStatusOrderEwasteByPenyetorId,
+  getCountAllStatusMenungguforPenyetor,
+  getCountAllStatusDiterimaforPenyetor,
   getUserByEmail,
   getUserByID,
   createNewUser,

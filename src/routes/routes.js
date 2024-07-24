@@ -24,6 +24,8 @@ noAuth.get('/orders/status/query/:status', userController.getOrderEwasteByStatus
 noAuth.get('/orders/status/id/menunggu', userController.getOrderEwasteByKolektorIdAndStatusMenunggu);
 noAuth.get('/orders/status/id/kolektor/all', userController.getAllStatusOrderEwasteByKolektorId)
 noAuth.get('/orders/status/id/penyetor/all', userController.getAllStatusOrderEwasteByPenyetorId)
+noAuth.get('/orders/status/id/count/penyetor/menunggu', userController.getCountAllStatusMenungguforPenyetor)
+noAuth.get('/orders/status/id/count/penyetor/diterima', userController.getCountAllStatusDiterimaforPenyetor)
 noAuth.put('/setor/accept/:id', userController.updateStatusOrderEwasteAccepted);
 noAuth.put('/setor/reject/:id', userController.updateStatusOrderEwasteRejected);
 noAuth.put('/setor/finish/:id', userController.updateStatusOrderEwasteFinished);
