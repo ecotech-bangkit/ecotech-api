@@ -263,6 +263,41 @@ const getAllStatusOrderEwasteByKolektorId = async (req, res) => {
   }
 }
 
+const getAllStatusOrderEwasteByPenyetorId = async (req, res) => {
+  const { penyetor_id } = req.query
+
+  if (!penyetor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'penyetor_id is required',
+    });
+  }
+
+  try {
+    const [data] = await userModel.getAllStatusOrderEwasteByPenyetorId(penyetor_id)
+    if (!data) {
+      res.status(404).json({
+      statusCode: 404,
+      message: 'Orders not found'
+      })
+    return
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
 const getAllOrderEwaste = async (req, res) => {
   try {
     const [data] = await userModel.getAllOrderEwaste()
@@ -876,6 +911,7 @@ module.exports = {
   getOrderEwasteByStatus,
   getOrderEwasteByKolektorIdAndStatusMenunggu,
   getAllStatusOrderEwasteByKolektorId,
+  getAllStatusOrderEwasteByPenyetorId,
   getUserByEmail,
   getUserByID,
   createNewUser,

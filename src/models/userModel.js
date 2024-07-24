@@ -62,7 +62,12 @@ const getAllStatusOrderEwasteByKolektorId = async (kolektor_id) => {
   const query = 'SELECT penyetoran.id, penyetoran.penyetor_id, users.name AS penyetor_name, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.penyetor_id WHERE kolektor_id = ?'
   const[rows] = await connection.execute(query, [kolektor_id])
   return [rows]
-}
+} 
+const getAllStatusOrderEwasteByPenyetorId = async (penyetor_id) => {
+  const query = 'SELECT penyetoran.id, penyetoran.kolektor_id, users.name AS kolektor_name, users.alamat, users.nohp, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.kolektor_id WHERE penyetoran.penyetor_id = ?';
+  const[rows] = await connection.execute(query, [penyetor_id])
+  return [rows]
+} 
 const updateStatusOrderEwaste = (id, {status}) => {
   const query = 'UPDATE penyetoran SET status = ? WHERE id = ?';
   const values = [status, id]
@@ -110,6 +115,7 @@ module.exports = {
   getOrderEwasteByStatus,
   getOrderEwasteByKolektorIdAndStatusMenunggu,
   getAllStatusOrderEwasteByKolektorId,
+  getAllStatusOrderEwasteByPenyetorId,
   updateStatusOrderEwaste,
   updateUserByEmail,
   updatePhotoProfileByEmail,
