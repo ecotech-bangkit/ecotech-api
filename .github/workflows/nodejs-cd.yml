@@ -23,6 +23,7 @@ jobs:
         script: |
           set -x
           sudo su
+          whoami
           cd /home/ubuntu/ecotech-api
           git pull origin master
           git status
