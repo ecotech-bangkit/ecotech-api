@@ -22,6 +22,7 @@ jobs:
         port: 22
         script: |
           set -x
+          sudo su
           cd /home/ubuntu/ecotech-api
           git pull origin master
           git status
