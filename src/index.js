@@ -28,12 +28,14 @@ app.use('/v1/users/', crudRouter);
 app.use('/v1/auth/', authRouter);
 app.use('/v1/predict/', routerML);
 app.use('/v1/', noAuth)
+
+app.disable('etag')
 app.get('/', (req, res) => {
-  res.send('Response Success!');
+  res.status(200).send('Response Success!');
 });
 
 app.listen(PORT || 8000, () => {
   console.log(`App successfully run in ${DB_HOST}:${PORT}`);
 });
 
-module.exports = { app };
+module.exports = app

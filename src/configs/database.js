@@ -13,7 +13,6 @@ dbPool.query('SELECT 1 + 1 AS solution', function (error, results) {
     console.error('Database connection error:', error);
     process.exit(1);
   }
-  console.log('The solution is: ', results[0].solution);
 });
 
 module.exports = dbPool.promise();
