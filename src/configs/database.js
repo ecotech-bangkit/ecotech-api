@@ -8,7 +8,7 @@ const dbPool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
-dbPool.query('SELECT 1 + 1 AS solution', function (error, results) {
+dbPool.query('SELECT 1 + 1 AS solution', function (error) {
   if (error) {
     console.error('Database connection error:', error);
     process.exit(1);
