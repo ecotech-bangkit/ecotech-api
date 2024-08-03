@@ -7,5 +7,5 @@ require("dotenv").config();
 it("should return Response Success!", async () => {
     const res = await request.get('/')
     expect(res.status).toBe(200)
-    expect(res.text).toBe('Response Success!')
+    expect(res.text).toBe('Response Success')
 })
