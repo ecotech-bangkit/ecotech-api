@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const middlewareLog = require('./middlewares/logger');
-const { crudRouter, authRouter, routerML } = require('./routes/routes');
+const { crudRouter, authRouter, routerML, noAuth } = require('./routes/routes');
 const session = require('express-session');
 const DB_HOST = process.env.DB_HOST;
 const PORT = process.env.PORT;
@@ -27,12 +27,15 @@ app.use(
 app.use('/v1/users/', crudRouter);
 app.use('/v1/auth/', authRouter);
 app.use('/v1/predict/', routerML);
+app.use('/v1/', noAuth)
+
+app.disable('etag')
 app.get('/', (req, res) => {
-  res.send('Response Success!');
+  res.status(200).send('Response Success!');
 });
 
 app.listen(PORT || 8000, () => {
   console.log(`App successfully run in ${DB_HOST}:${PORT}`);
 });
 
-module.exports = { app };
+module.exports = app

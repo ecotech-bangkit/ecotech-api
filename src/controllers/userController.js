@@ -5,8 +5,12 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const GCS_BUCKET_NAME = process.env.GCS_BUCKET_NAME;
-const { Storage } = require('@google-cloud/storage');
+// const { Storage } = require('@google-cloud/storage');
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 600 });
+const { uploadImageToS3 } = require('../modules/imgUploadS3')
 const { generateTokenPair } = require('../middlewares/auth');
+const { data } = require('@tensorflow/tfjs');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -82,6 +86,308 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
+const getAllKolektor = async (req, res) => {
+  try {
+    const [dataKolektor] = await userModel.getAllUsersKolektor(3)
+    if (!dataKolektor){
+      res.status(404).json({
+        statusCode: 404,
+        message: "Users with Kolektor role not found"
+      })
+      return;
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'User retrieved successfully',
+      data: dataKolektor,
+    });
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
+    });
+  }
+}
+
+const getAllPenyetor = async (req, res) => {
+  try {
+    const [penyetor] = await userModel.getAllUsersPenyetor(2)
+    if (!penyetor) {
+      res.status(404).json({
+        statusCode: 200,
+        message: 'Users with role penyetor not found',
+      })
+      return;
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Get all penyetor data success',
+      data: penyetor
+    })
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getOrderEwasteByID = async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const data = await userModel.getOrderEwasteByID(id)
+
+    if (!data) {
+      res.status(404).json({
+        statusCode: 404,
+        message: 'ID order not found'
+      })
+      return
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'User retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getOrderEwasteByStatus = async (req, res) => {
+  const { status } = req.params
+
+  try {
+    const [data] = await userModel.getOrderEwasteByStatus(status)
+    if (!data) {
+      res.status(404).json({
+        statusCode: 404,
+        message: 'Orders not found'
+      })
+      return
+    }
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getOrderEwasteByKolektorIdAndStatusMenunggu = async (req, res) => {
+  const { kolektor_id } = req.query
+
+  if (!kolektor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'kolektor_id is required',
+    });
+  }
+
+  try {
+    const [data] = await userModel.getOrderEwasteByKolektorIdAndStatusMenunggu(kolektor_id)
+    if (!data) {
+      res.status(404).json({
+      statusCode: 404,
+      message: 'Orders not found'
+      })
+    return
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getAllStatusOrderEwasteByKolektorId = async (req, res) => {
+  const { kolektor_id } = req.query
+
+  if (!kolektor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'kolektor_id is required',
+    });
+  }
+
+  try {
+    const [data] = await userModel.getAllStatusOrderEwasteByKolektorId(kolektor_id)
+    if (!data) {
+      res.status(404).json({
+      statusCode: 404,
+      message: 'Orders not found'
+      })
+    return
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getAllStatusOrderEwasteByPenyetorId = async (req, res) => {
+  const { penyetor_id } = req.query
+
+  if (!penyetor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'penyetor_id is required',
+    });
+  }
+
+  try {
+    const [data] = await userModel.getAllStatusOrderEwasteByPenyetorId(penyetor_id)
+    if (!data) {
+      res.status(404).json({
+      statusCode: 404,
+      message: 'Orders not found'
+      })
+    return
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      data: data
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getCountAllStatusMenungguforPenyetor = async (req, res) => {
+  const { penyetor_id } = req.query
+
+  if (!penyetor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'penyetor_id is required',
+    });
+  }
+
+  try {
+    const status = 'Menunggu'
+    const totalCount = await userModel.getCountAllStatusMenungguforPenyetor(penyetor_id, {status})
+    if (totalCount === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: 'No orders found',
+        total: 0
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      total: totalCount
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+const getCountAllStatusDiterimaforPenyetor = async (req, res) => {
+  const { penyetor_id } = req.query
+
+  if (!penyetor_id) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: 'penyetor_id is required',
+    });
+  }
+
+  try {
+    const status = 'Diterima'
+    const totalCount = await userModel.getCountAllStatusMenungguforPenyetor(penyetor_id, {status})
+    if (totalCount === 0) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: 'No orders found',
+        total: 0
+      });
+    }
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Orders retrieved successfully',
+      total: totalCount
+    })
+
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal Server Error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const getAllOrderEwaste = async (req, res) => {
+  try {
+    const [data] = await userModel.getAllOrderEwaste()
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Get all data successfully',
+      data: data
+    })
+
+  } catch (error) {
+    res.json({
+      statusCode : 500,
+      message: 'Internal server error',
+      error: error.sqlMessage
+    })
+  }
+}
+
 const createNewUser = async (req, res) => {
   const { body } = req;
   const { name, email, password, repassword } = body;
@@ -109,13 +415,13 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    if (password.length < 8) {
-      res.status(400).json({
-        statusCode: 400,
-        error: 'Password character at least 8',
-      });
-      return;
-    }
+    // if (password.length < 8) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Password character at least 8',
+    //   });
+    //   return;
+    // }
     const registeredEmail = await userModel.getUserByEmail(body.email);
     const isEmailRegistered = registeredEmail.length > 0;
     if (isEmailRegistered) {
@@ -125,14 +431,14 @@ const createNewUser = async (req, res) => {
       });
       return;
     }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(password, salt);
     const id = uuidv4();
-    const defaultRoleUser = 3;
+    const defaultRoleUser = 2;
     await userModel.createNewUser({
       id,
       ...body,
-      password: hashedPassword,
+      password: password,
       roleid: defaultRoleUser,
       image: '',
     });
@@ -144,7 +450,7 @@ const createNewUser = async (req, res) => {
         id,
         name: body.name,
         email: body.email,
-        password: hashedPassword,
+        password: body.password,
       },
     });
   } catch (error) {
@@ -156,6 +462,238 @@ const createNewUser = async (req, res) => {
     });
   }
 };
+
+const createNewUserKolektor = async (req, res) => {
+  const { body } = req;
+  const { name, email, alamat, nohp, password, repassword } = body;
+
+  try {
+    if (name.length < 2) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'name character minimum 2 character',
+      });
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Invalid. Please use valid email format',
+      });
+      return;
+    }
+    if (nohp.length > 15) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'No HP values must not greater than 15'
+      })
+      return;
+    }
+    if (password !== repassword) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Passwords do not match',
+      });
+      return;
+    }
+    // if (password.length < 8) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Password character at least 8',
+    //   });
+    //   return;
+    // }
+    const registeredEmail = await userModel.getUserByEmail(body.email);
+    const isEmailRegistered = registeredEmail.length > 0;
+    if (isEmailRegistered) {
+      res.status(400).json({
+        statusCode: 400,
+        error: 'Email already registered',
+      });
+      return;
+    }
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(password, salt);
+    const id = uuidv4();
+    const defaultRoleUser = 3;
+    await userModel.createNewUserKolektor({
+      id,
+      ...body,
+      password: password,
+      roleid: defaultRoleUser,
+      image: '',
+    });
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Registration successful',
+      data: {
+        id,
+        name: body.name,
+        email: body.email,
+        password: body.password,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      errorMessage: error.sqlMessage,
+    });
+  }
+};
+
+const createOrderEwaste = async (req, res) => {
+  const {penyetor_id, kolektor_id} = req.body
+
+  const checkPenyetor = await userModel.getUserByID(penyetor_id)
+  const checkKolektor = await userModel.getUserByID(kolektor_id)
+  if (!checkPenyetor) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Data Penyetor tidak ditemukan',
+    });
+    return;
+  }
+  if (!checkKolektor) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Data Kolektor tidak ditemukan',
+    });
+    return;
+  }
+  if (!checkPenyetor && !checkKolektor) {
+    res.status(400).json({
+      statusCode: 400,
+      error: 'Data Penyetor dan Kolektor tidak ditemukan',
+    });
+    return;
+  }
+
+  const file = req.file;
+  if (!file) {
+    return res.status(400).json({ error: 'Image file is required' });
+  }
+
+  try {
+    const s3Result = await uploadImageToS3(file.buffer, file.originalname, file.mimetype);
+    const imageUrl = s3Result.Location;
+    console.log(`imageUrl res: ${imageUrl}`)
+    const status = 'Menunggu'
+    await userModel.createOrderEwaste({
+      penyetor_id,
+      kolektor_id,
+      item_image: imageUrl,
+      status
+    })
+
+    res.status(201).json({
+      statusCode: 201,
+      message: 'Order created successfully',
+      data:  { penyetor_id, kolektor_id, item_image: imageUrl, status },
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Error while creating ewaste order',
+      errorMessage: error.sqlMessage,
+    });
+  }
+}
+
+const updateStatusOrderEwasteAccepted = async (req, res) => {
+  const {id} = req.params;
+  
+  try {
+  const order = await userModel.getOrderEwasteByID(id)
+  if (!order) {
+    res.status(404).json({
+      statusCode: 404,
+      error: 'ID tx not found'
+    })
+    return
+  }
+
+    const status = 'Diterima'
+    await userModel.updateStatusOrderEwaste(id, { status })
+
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status updated successfully',
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal server error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const updateStatusOrderEwasteRejected = async (req, res) => {
+  const {id} = req.params;
+  
+  try {
+  const order = await userModel.getOrderEwasteByID(id)
+  if (!order) {
+    res.status(404).json({
+      statusCode: 404,
+      error: 'ID tx not found'
+    })
+    return
+  }
+
+    const status = 'Ditolak'
+    await userModel.updateStatusOrderEwaste(id, { status })
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status updated successfully',
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal server error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
+
+const updateStatusOrderEwasteFinished = async (req, res) => {
+  const {id} = req.params;
+  
+  try {
+  const order = await userModel.getOrderEwasteByID(id)
+  if (!order) {
+    res.status(404).json({
+      statusCode: 404,
+      error: 'ID tx not found'
+    })
+    return
+  }
+
+    const status = 'Selesai'
+    await userModel.updateStatusOrderEwaste(id, {status: status})
+
+    res.status(200).json({
+      statusCode: 200,
+      message: 'Status updated successfully',
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Internal server error',
+      errorMessage: error.sqlMessage
+    })
+  }
+}
 
 const updateUserByEmail = async (req, res) => {
   const { email } = req.params;
@@ -247,7 +785,7 @@ const updateUserPasswordByEmail = async (req, res) => {
     console.error(error);
     res.status(500).json({
       statusCode: 500,
-      error: 'Internal Server Error',
+      error: 'Internal Server Error', 
       errorMessage: error,
       message: error.sqlMessage,
     });
@@ -286,8 +824,9 @@ const deleteUserByID = async (req, res) => {
     });
   }
 };
+
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password} = req.body;
 
   try {
     const [user] = await userModel.getUserByEmail(email);
@@ -298,14 +837,22 @@ const login = async (req, res) => {
       });
       return;
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      res.status(400).json({
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+    // if (!isPasswordValid) {
+    //   res.status(400).json({
+    //     statusCode: 400,
+    //     error: 'Invalid password',
+    //   });
+    //   return;
+    // }
+
+    if (password !== user.password) {
+      return res.status(400).json({
         statusCode: 400,
         error: 'Invalid password',
       });
-      return;
     }
+    
     const { accessToken, refreshToken } = generateTokenPair(user);
 
     await userModel.updateUserTokenByEmail(user.email, refreshToken);
@@ -313,8 +860,14 @@ const login = async (req, res) => {
     res.status(200).json({
       statusCode: 200,
       message: 'Login successful',
-      accessToken,
-      refreshToken,
+      data: {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "roleid": user.roleid,
+        accessToken,
+      }
+
     });
   } catch (error) {
     res.status(500).json({
@@ -334,6 +887,7 @@ const logout = async (req, res) => {
         statusCode: 401,
         error: 'Unauthorized',
       });
+      return
     }
     await userModel.logout(userId);
 
@@ -347,6 +901,7 @@ const logout = async (req, res) => {
       error: 'Internal Server Error',
       errorMessage: error,
     });
+    return
   }
 };
 
@@ -417,11 +972,27 @@ const uploadProfilePhoto = async (req, res) => {
   }
 };
 
+
 module.exports = {
   getAllUsers,
+  getAllKolektor,
+  getAllPenyetor,
+  getAllOrderEwaste,
+  getOrderEwasteByID,
+  getOrderEwasteByStatus,
+  getOrderEwasteByKolektorIdAndStatusMenunggu,
+  getAllStatusOrderEwasteByKolektorId,
+  getAllStatusOrderEwasteByPenyetorId,
+  getCountAllStatusMenungguforPenyetor,
+  getCountAllStatusDiterimaforPenyetor,
   getUserByEmail,
   getUserByID,
   createNewUser,
+  createNewUserKolektor,
+  createOrderEwaste,
+  updateStatusOrderEwasteAccepted,
+  updateStatusOrderEwasteRejected,
+  updateStatusOrderEwasteFinished,
   updateUserByEmail,
   updateUserPasswordByEmail,
   uploadProfilePhoto,

@@ -9,16 +9,104 @@ const createNewUser = (body) => {
   const values = [body.id, body.name, body.email, body.password, body.roleid];
   return connection.execute(query, values);
 };
+const createNewUserKolektor = (body) => {
+  const query = 'INSERT INTO users (id, name, alamat, nohp, email, password, roleid) VALUES (?, ?, ?, ?, ?, ?, ?)';
+  const values = [body.id, body.name, body.alamat, body.nohp, body.email, body.password, body.roleid];
+  return connection.execute(query, values);
+};
+const createOrderEwaste = (body) => {
+  const query = 'INSERT INTO penyetoran (penyetor_id, kolektor_id, item_image, status) VALUES (?,?,?,?)'
+  const values = [body.penyetor_id, body.kolektor_id, body.item_image, body.status]
+  return connection.execute(query, values)
+}
 const getUserByID = async (id) => {
   const query = 'SELECT * FROM users WHERE id = ?';
   const [user] = await connection.execute(query, [id]);
   return user[0];
 };
+const getAllUsersKolektor = async (roleid) =>{
+  const query = 'SELECT id, name, alamat, nohp, roleid FROM users WHERE roleid = ?';
+  const [user] = await connection.execute(query,[roleid])
+  return [user];
+}
+const getAllUsersPenyetor = async (roleid) =>{
+  const query = 'SELECT id, name, alamat, nohp, roleid FROM users WHERE roleid = ?';
+  const [user] = await connection.execute(query,[roleid])
+  return [user];
+}
 const getUserByEmail = async (email) => {
   const query = 'SELECT * FROM users WHERE email = ?';
   const [user] = await connection.execute(query, [email]);
   return user;
 };
+const getAllOrderEwaste = async () => {
+  const query = 'SELECT * FROM penyetoran'
+  return await connection.execute(query)
+}
+const getOrderEwasteByID = async (id) => {
+  const query = 'SELECT * FROM penyetoran WHERE id = ? '
+  const [values]= await connection.execute(query, [id])
+  return values[0]
+}
+const getOrderEwasteByStatus = async (status) => {
+  const query = 'SELECT * FROM penyetoran WHERE status = ? '
+  const values = await connection.execute(query, [status])
+  return values
+}
+const getOrderEwasteByKolektorIdAndStatusMenunggu = async (kolektor_id) => {
+  const query = 'SELECT penyetoran.id, penyetoran.penyetor_id, users.name AS penyetor_name, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.penyetor_id WHERE status = ? AND kolektor_id = ?'
+  const[rows] = await connection.execute(query, ['Menunggu', kolektor_id])
+  return [rows]
+}
+const getAllStatusOrderEwasteByKolektorId = async (kolektor_id) => {
+  const query = 'SELECT penyetoran.id, penyetoran.penyetor_id, users.name AS penyetor_name, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.penyetor_id WHERE kolektor_id = ?'
+  const[rows] = await connection.execute(query, [kolektor_id])
+  return [rows]
+} 
+const getAllStatusOrderEwasteByPenyetorId = async (penyetor_id) => {
+  const query = 'SELECT penyetoran.id, penyetoran.kolektor_id, users.name AS kolektor_name, users.alamat, users.nohp, item_image, status, created_at FROM penyetoran INNER JOIN users on users.id = penyetoran.kolektor_id WHERE penyetoran.penyetor_id = ?';
+  const[rows] = await connection.execute(query, [penyetor_id])
+  return [rows]
+} 
+const getCountAllStatusMenungguforPenyetor = async (penyetor_id, { status }) => {
+  const query = `
+    SELECT COUNT(*) AS totalCount
+    FROM penyetoran 
+    INNER JOIN users ON users.id = penyetoran.kolektor_id 
+    WHERE penyetoran.penyetor_id = ? AND status = ?
+  `;
+  const values = [penyetor_id, status]
+
+  try {
+    const [rows] = await connection.execute(query, values);
+    return rows[0].totalCount;
+  } catch (error) {
+    console.error('Database error:', error)
+    throw error
+  }
+}
+const getCountAllStatusDiterimaforPenyetor = async (penyetor_id, { status }) => {
+  const query = `
+    SELECT COUNT(*) AS totalCount
+    FROM penyetoran 
+    INNER JOIN users ON users.id = penyetoran.kolektor_id 
+    WHERE penyetoran.penyetor_id = ? AND status = ?
+  `;
+  const values = [penyetor_id, status]
+
+  try {
+    const [rows] = await connection.execute(query, values);
+    return rows[0].totalCount;
+  } catch (error) {
+    console.error('Database error:', error)
+    throw error
+  }
+}
+const updateStatusOrderEwaste = (id, {status}) => {
+  const query = 'UPDATE penyetoran SET status = ? WHERE id = ?';
+  const values = [status, id]
+  return connection.execute(query, values);
+}
 const updateUserByEmail = (email, { name }) => {
   const query = 'UPDATE users SET name = ? WHERE email = ?';
   const values = [name, email];
@@ -50,8 +138,21 @@ const updateUserTokenByEmail = (email, token) => {
 module.exports = {
   getAllUsers,
   createNewUser,
+  createNewUserKolektor,
+  createOrderEwaste,
+  getAllOrderEwaste,
+  getOrderEwasteByID,
   getUserByEmail,
   getUserByID,
+  getAllUsersKolektor,
+  getAllUsersPenyetor,
+  getOrderEwasteByStatus,
+  getOrderEwasteByKolektorIdAndStatusMenunggu,
+  getAllStatusOrderEwasteByKolektorId,
+  getAllStatusOrderEwasteByPenyetorId,
+  getCountAllStatusMenungguforPenyetor,
+  getCountAllStatusDiterimaforPenyetor,
+  updateStatusOrderEwaste,
   updateUserByEmail,
   updatePhotoProfileByEmail,
   updateUserPasswordByEmail,
