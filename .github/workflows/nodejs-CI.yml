@@ -34,6 +34,10 @@ jobs:
         echo "  User ${{ secrets.USERNAME }}" >> ~/.ssh/config
         echo "  IdentityFile ~/.ssh/id_rsa" >> ~/.ssh/config
         echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+    
+    - name: Debug SSH Connection
+      run: |
+        ssh -vvv -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.HOST }} echo "SSH connection successful"
 
     - name: Establish SSH Tunnel
       run: |
