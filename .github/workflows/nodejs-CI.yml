@@ -44,8 +44,7 @@ jobs:
         DB_HOST: 127.0.0.1
         DB_USERNAME: ${{ secrets.DB_USERNAME }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-
+        DB_NAME: ${{ secrets.DB_NAME }} 
     - run: npm i
     - run: npm run build --if-present
     - run: npm test
